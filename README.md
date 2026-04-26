@@ -34,14 +34,15 @@ iEx AI is built on the **Nox Protocol** — a confidential computing layer that 
 | **JS SDK** | Encrypt inputs and decrypt results with `@iexec-nox/handle` |
 | **ChainGPT Integration** | AI-powered vault recommendations and contract auditing |
 
-**Supported Confidential Tokens:**
+**Confidential Tokens on Arbitrum Sepolia:**
 
-| Token | Wraps From | Standard |
-|-------|-----------|----------|
-| cUSDC | USDC (0x75faf114...) | ERC-7984 |
-| cRLC | RLC (0x9923eD3c...) | ERC-7984 |
+| Token | Wraps From | Standard | Contract |
+|-------|-----------|----------|----------|
+| cUSDC | USDC | ERC-7984 | `0x1ccec6bc...` |
+| cRLC | RLC | ERC-7984 | `0x92b23f4a...` |
 
-> Only cUSDC and cRLC are deployed on Arbitrum Sepolia. Source: [iExec-Nox/demo-ctoken](https://github.com/iExec-Nox/demo-ctoken)
+> Only cUSDC and cRLC are currently deployed on Arbitrum Sepolia testnet.
+> Source: [iExec-Nox/demo-ctoken](https://github.com/iExec-Nox/demo-ctoken)
 
 ---
 
@@ -123,6 +124,131 @@ User selects token + amount
 | Confidential Tokens | ERC-7984 (@iexec-nox/handle) |
 | AI | ChainGPT |
 | Icons | react-icons |
+
+---
+
+## ERC-7984 Implementation
+
+This section documents the full ERC-7984 implementation as required by the challenge criteria.
+
+### Deployed Contracts (Arbitrum Sepolia)
+
+| Contract | Address | Standard |
+|----------|---------|----------|
+| USDC (ERC-20) | `0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d` | ERC-20 |
+| **cUSDC** (ERC-7984) | `0x1ccec6bc60db15e4055d43dc2531bb7d4e5b808e` | ERC-7984 |
+| RLC (ERC-20) | `0x9923eD3cbd90CD78b910c475f9A731A6e0b8C963` | ERC-20 |
+| **cRLC** (ERC-7984) | `0x92b23f4a59175415ced5cb37e64a1fc6a9d79af4` | ERC-7984 |
+| NoxCompute (TEE Gateway) | `0xd464B198f06756a1d00be223634b85E0a731c229` | Protocol |
+
+Source: [iExec-Nox/demo-ctoken](https://github.com/iExec-Nox/demo-ctoken/blob/main/lib/contracts.ts)
+
+### ERC-7984 Interface (Solidity)
+
+Full interface implemented per ERC-7984 spec:
+
+```solidity
+// Wrap: lock ERC-20 → mint cToken (cleartext amount, no encryption needed)
+function wrap(address to, uint256 amount) external returns (bytes32 handle);
+
+// Unwrap step 1: initiate unwrap (requires encrypted handle + proof)
+function unwrap(
+    address from,
+    address to,
+    bytes32 encryptedAmount,
+    bytes inputProof
+) external returns (bytes32);
+
+// Unwrap step 2: finalize (TEE verifies decryption, transfers underlying ERC-20)
+function finalizeUnwrap(bytes32 unwrapAmount, bytes decryptionProof) external;
+
+// Confidential transfer (encrypted amount + proof required)
+function confidentialTransfer(
+    address to,
+    bytes32 encryptedAmount,
+    bytes inputProof
+) external;
+
+// Balance queries return bytes32 handles (must decrypt client-side via Nox SDK)
+function confidentialBalanceOf(address account) external view returns (bytes32);
+function confidentialTotalSupply() external view returns (bytes32);
+```
+
+### JavaScript SDK Integration
+
+Using `@iexec-nox/handle` for client-side encryption/decryption:
+
+```typescript
+import { createViemHandleClient } from "@iexec-nox/handle";
+
+// Create client from wallet
+const handleClient = await createViemHandleClient(walletClient);
+
+// Encrypt amount for unwrap/transfer operations
+const { handle, handleProof } = await handleClient.encryptInput(
+  1000n,           // amount
+  "uint256",       // SolidityType
+  cUSDCAddress     // target contract (must be allowed to use encrypted value)
+);
+
+// Decrypt balance handle returned by confidentialBalanceOf()
+const { value } = await handleClient.decrypt(balanceHandle);
+```
+
+### Deposit Flow (Approve → Wrap)
+
+```typescript
+// 1. Approve cUSDC contract to spend underlying USDC
+await writeContract(config, {
+  address: usdcAddress,
+  abi: erc20Abi,
+  functionName: "approve",
+  args: [cUSDCAddress, amount],
+});
+
+// 2. Wrap USDC → cUSDC (cleartext amount, returns encrypted handle)
+const wrapTx = await writeContract(config, {
+  address: cUSDCAddress,
+  abi: ERC7984_WRAPPER_ABI,
+  functionName: "wrap",
+  args: [account, amount],  // address to, uint256 amount
+});
+```
+
+### Withdraw Flow (Unwrap → Finalize)
+
+```typescript
+// 1. Encrypt withdrawal amount
+const { handle, handleProof } = await handleClient.encryptInput(
+  amount, "uint256", cUSDCAddress
+);
+
+// 2. Initiate unwrap (creates encrypted unwrap request)
+const unwrapTx = await writeContract(config, {
+  address: cUSDCAddress,
+  abi: ERC7984_UNWRAPPER_ABI,
+  functionName: "unwrap",
+  args: [account, account, handle, handleProof],
+});
+
+// 3. Finalize (TEE verifies proof, transfers USDC to recipient)
+const finalizeTx = await writeContract(config, {
+  address: cUSDCAddress,
+  abi: ERC7984_UNWRAPPER_ABI,
+  functionName: "finalizeUnwrap",
+  args: [unwrapHandle],
+});
+```
+
+### Privacy Properties
+
+| Property | How It Works |
+|----------|-------------|
+| Hidden balances | `confidentialBalanceOf` returns encrypted handle, not plaintext value |
+| Hidden amounts | All transfers use `encryptedAmount` handle, not visible number |
+| Selective disclosure | ACL system allows granting view access to specific addresses |
+| MEV protection | Amounts hidden at smart contract level, MEV bots see only encrypted handles |
+| TEE verification | All decryption/verification runs in Intel TDX enclaves |
 
 ---
 
