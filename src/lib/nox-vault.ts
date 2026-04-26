@@ -12,7 +12,8 @@ export async function fetchVaultsViaProxy(
   params: FetchVaultsParams,
   signal?: AbortSignal,
 ): Promise<NoxVaultsResponse> {
-  const url = new URL("/api/nox/vaults", window.location.origin);
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+  const url = new URL("/api/nox/vaults", baseUrl);
 
   for (const [key, value] of Object.entries(params)) {
     if (value === undefined || value === null || value === "") continue;

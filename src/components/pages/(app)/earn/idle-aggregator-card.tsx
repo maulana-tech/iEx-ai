@@ -4,7 +4,7 @@ import { type FeatureCard, FeatureSections } from "@/components/ui";
 
 const ARBITRUM_CHAIN = {
   name: "Arbitrum",
-  logo: "/Assets/Images/Logo-Coin/arbitrum-logo.svg",
+  logo: "/Assets/Images/Logo-Coin/arb-logo.svg",
 } as const;
 
 const FEATURE_CARDS: FeatureCard[] = [

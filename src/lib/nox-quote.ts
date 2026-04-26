@@ -16,7 +16,8 @@ export async function fetchQuote(
   params: QuoteParams,
   signal?: AbortSignal,
 ): Promise<NoxQuote> {
-  const url = new URL("/api/nox/quote", window.location.origin);
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+  const url = new URL("/api/nox/quote", baseUrl);
   url.searchParams.set("vaultAddress", params.vaultAddress);
   url.searchParams.set("tokenIn", params.tokenIn.address);
   url.searchParams.set("amountIn", params.amountIn);

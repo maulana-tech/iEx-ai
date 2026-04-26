@@ -11,8 +11,8 @@ export type NoxMetaResponse = {
 export async function fetchNoxMeta(
   signal?: AbortSignal,
 ): Promise<NoxMetaResponse> {
-  const url = new URL("/api/nox/meta", window.location.origin);
-  const response = await fetch(url.toString(), {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+  const response = await fetch(`${baseUrl}/api/nox/meta`, {
     signal,
     cache: "no-store",
     headers: { accept: "application/json" },
