@@ -38,9 +38,10 @@ iEx AI is built on the **Nox Protocol** — a confidential computing layer that 
 
 | Token | Wraps From | Standard |
 |-------|-----------|----------|
-| cUSDC | USDC | ERC-7984 |
-| cUSDT | USDT | ERC-7984 |
-| cWETH | WETH | ERC-7984 |
+| cUSDC | USDC (0x75faf114...) | ERC-7984 |
+| cRLC | RLC (0x9923eD3c...) | ERC-7984 |
+
+> Only cUSDC and cRLC are deployed on Arbitrum Sepolia. Source: [iExec-Nox/demo-ctoken](https://github.com/iExec-Nox/demo-ctoken)
 
 ---
 
@@ -50,7 +51,7 @@ DeFi today is fully transparent. Every wallet's positions, deposit amounts, and 
 
 iEx AI solves this by leveraging Nox Protocol's confidential computing. Your deposits are encrypted at the token level — balances are hidden, strategies are private, and MEV bots can't see what you're doing.
 
-Dani opens iEx AI, connects her wallet on Arbitrum, deposits 1000 USDC into a confidential vault. The USDC is wrapped to cUSDC (Confidential USDC), deposited privately, and starts earning yield — all in one click. Her balance? Hidden. Her strategy? Private. Her yield? Real.
+Dani opens iEx AI, connects her wallet on Arbitrum Sepolia, deposits 1000 USDC into the Confidential USDC vault. The USDC is wrapped to cUSDC (Confidential USDC via ERC-7984), deposited privately, and starts earning yield — all in one click. Her balance? Hidden. Her strategy? Private. Her yield? Real.
 
 ---
 
@@ -58,12 +59,12 @@ Dani opens iEx AI, connects her wallet on Arbitrum, deposits 1000 USDC into a co
 
 | Feature | Description |
 |---------|-------------|
-| Confidential Vault Aggregator | Live-ranked vault routes with hidden balances |
+| Confidential Vault Aggregator | Browse live vaults with ERC-7984 confidential tokens on Arbitrum Sepolia |
 | APY / TVL / Risk Filters | Filter vaults by yield, size, and risk tier |
-| Privacy Badges | Each vault shows privacy level and confidential status |
-| One-Click Deposit | Wrap → Approve → Deposit in a single flow |
+| Privacy Badges | Each vault shows CONFIDENTIAL status via ERC-7984 |
+| One-Click Wrap Deposit | Approve ERC-20 → wrap to cToken via ERC-7984 contract |
 | Confidential Portfolio | View positions with encrypted balance indicators |
-| Withdraw Flow | One-click withdrawal from confidential vaults |
+| Withdraw Flow | Unwrap cToken back to underlying ERC-20 |
 | ChainGPT AI | AI-powered vault recommendations and contract auditing |
 | Share Card | Share your earn positions (public side only) |
 | Arbitrum-Native | Default chain is Arbitrum Sepolia (421614) |
@@ -137,9 +138,8 @@ User selects token + amount
 ```bash
 cp .env.example .env.local
 # Fill in:
-#   IEXEC_NOX_API_KEY — from iExec
-#   IEXEC_NOX_SECRET_KEY — from iExec
-#   PROJECT_ID — WalletConnect project ID
+#   PROJECT_ID — WalletConnect project ID (required)
+#   CHAINGPT_API_KEY — ChainGPT API key for AI features (optional, contact @vladnazarxyz for free credits)
 #   NEXT_PUBLIC_APP_URL — your domain (http://localhost:3000 for local)
 pnpm install
 pnpm dev

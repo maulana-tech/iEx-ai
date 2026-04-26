@@ -2,8 +2,7 @@ import type { Chain, Token } from "@/types";
 
 export const mockTokens: Token[] = [
   { symbol: "cUSDC", name: "Confidential USDC", usdPrice: 1 },
-  { symbol: "cUSDT", name: "Confidential USDT", usdPrice: 1 },
-  { symbol: "cWETH", name: "Confidential WETH", usdPrice: 3500 },
+  { symbol: "cRLC", name: "Confidential RLC", usdPrice: 3.5 },
 ];
 
 export const mockChains: Chain[] = [
