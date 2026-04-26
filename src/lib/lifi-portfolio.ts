@@ -26,7 +26,8 @@ export async function fetchPortfolioViaProxy(
   address: string,
   signal?: AbortSignal,
 ): Promise<LifiPortfolioResponse> {
-  const url = new URL(`/api/nox/portfolio/${address}`, "http://localhost:3000");
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+  const url = new URL(`/api/nox/portfolio/${address}`, baseUrl);
   const response = await fetch(url.toString(), {
     signal,
     cache: "no-store",

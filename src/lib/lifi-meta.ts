@@ -36,7 +36,8 @@ export type LifiMetaResponse = {
 export async function fetchLifiMeta(
   signal?: AbortSignal,
 ): Promise<LifiMetaResponse> {
-  const url = new URL("/api/nox/meta", "http://localhost:3000");
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+  const url = new URL("/api/nox/meta", baseUrl);
   const response = await fetch(url.toString(), {
     signal,
     cache: "no-store",
