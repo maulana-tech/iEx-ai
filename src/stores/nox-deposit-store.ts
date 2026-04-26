@@ -1,16 +1,12 @@
 import {
-  readContract,
   waitForTransactionReceipt,
   writeContract,
 } from "@wagmi/core";
 import { erc20Abi, parseUnits } from "viem";
 import type { Config } from "wagmi";
 import { create } from "zustand";
-import type { NoxQuote, NoxToken } from "@/lib/nox-types";
-import {
-  createNoxHandleClientFromWindow,
-  encryptAmountWithHandle,
-} from "@/lib/nox-handle";
+import type { NoxQuote } from "@/lib/nox-types";
+import { NOX_CONTRACTS } from "@/lib/nox-types";
 import type { Chain, Token, VaultStrategy } from "@/types";
 
 export type DepositStep =
@@ -19,7 +15,6 @@ export type DepositStep =
   | "ready"
   | "approving"
   | "wrapping"
-  | "depositing"
   | "success"
   | "error";
 
@@ -29,24 +24,17 @@ const ERC7984_WRAPPER_ABI = [
     type: "function",
     stateMutability: "nonpayable",
     inputs: [
+      { name: "to", type: "address" },
       { name: "amount", type: "uint256" },
-      { name: "handle", type: "bytes32" },
-      { name: "handleProof", type: "bytes" },
     ],
-    outputs: [],
+    outputs: [{ name: "", type: "bytes32" }],
   },
-] as const;
-
-const CONFIDENTIAL_VAULT_ABI = [
   {
-    name: "depositConfidential",
+    name: "underlying",
     type: "function",
-    stateMutability: "nonpayable",
-    inputs: [
-      { name: "handle", type: "bytes32" },
-      { name: "handleProof", type: "bytes" },
-    ],
-    outputs: [],
+    stateMutability: "pure",
+    inputs: [],
+    outputs: [{ name: "", type: "address" }],
   },
 ] as const;
 
@@ -78,12 +66,11 @@ type DepositState = {
   executeDeposit: (config: Config, account: `0x${string}`) => Promise<void>;
 };
 
-let quoteController: AbortController | null = null;
-
 function friendlyError(raw: string): string {
   const lower = raw.toLowerCase();
   if (lower.includes("user rejected")) return "Transaction rejected in wallet.";
   if (lower.includes("insufficient")) return "Insufficient balance.";
+  if (lower.includes("allowance")) return "Increase token allowance first.";
   return raw.length > 160 ? `${raw.slice(0, 160)}…` : raw;
 }
 
@@ -116,13 +103,7 @@ export const useNoxDepositStore = create<DepositState>((set, get) => ({
     });
   },
 
-  closeSheet: () => {
-    if (quoteController) {
-      quoteController.abort();
-      quoteController = null;
-    }
-    set({ open: false });
-  },
+  closeSheet: () => set({ open: false }),
 
   reset: () =>
     set({
@@ -166,35 +147,34 @@ export const useNoxDepositStore = create<DepositState>((set, get) => ({
 
     try {
       const amountBigInt = parseUnits(amount, vault.tokenDecimals);
-      const wrapperAddress = vault.tokenAddress as `0x${string}`;
 
-      set({ step: "approving" });
+      const cTokenAddress = vault.tokenAddress as `0x${string}`;
+      const underlyingAddress = NOX_CONTRACTS.USDC as `0x${string}`;
+
       const approveHash = await writeContract(config, {
-        address: wrapperAddress,
+        address: underlyingAddress,
         abi: erc20Abi,
         functionName: "approve",
-        args: [wrapperAddress, amountBigInt],
+        args: [cTokenAddress, amountBigInt],
         chainId: chain.id,
       });
-      await waitForTransactionReceipt(config, { hash: approveHash, chainId: chain.id });
+      await waitForTransactionReceipt(config, {
+        hash: approveHash,
+        chainId: chain.id,
+      });
 
       set({ step: "wrapping" });
-      const handleClient = await createNoxHandleClientFromWindow(account);
-      const { handle, handleProof } = await encryptAmountWithHandle(
-        handleClient,
-        amountBigInt,
-        "uint256",
-        wrapperAddress,
-      );
-
       const wrapHash = await writeContract(config, {
-        address: wrapperAddress,
+        address: cTokenAddress,
         abi: ERC7984_WRAPPER_ABI,
         functionName: "wrap",
-        args: [amountBigInt, handle as `0x${string}`, handleProof as `0x${string}`],
+        args: [account, amountBigInt],
         chainId: chain.id,
       });
-      await waitForTransactionReceipt(config, { hash: wrapHash, chainId: chain.id });
+      await waitForTransactionReceipt(config, {
+        hash: wrapHash,
+        chainId: chain.id,
+      });
 
       set({ txHash: wrapHash, step: "success" });
     } catch (error) {

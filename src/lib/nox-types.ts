@@ -131,10 +131,20 @@ export const SUPPORTED_NOX_CHAINS: NoxChain[] = [
   },
 ];
 
+// Real deployed contracts on Arbitrum Sepolia (421614)
+// Source: https://github.com/iExec-Nox/demo-ctoken/blob/main/lib/contracts.ts
+export const NOX_CONTRACTS = {
+  USDC: "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
+  cUSDC: "0x1ccec6bc60db15e4055d43dc2531bb7d4e5b808e",
+  RLC: "0x9923eD3cbd90CD78b910c475f9A731A6e0b8C963",
+  cRLC: "0x92b23f4a59175415ced5cb37e64a1fc6a9d79af4",
+  NOX_COMPUTE: "0xd464B198f06756a1d00be223634b85E0a731c229",
+} as const;
+
 export const CONFIDENTIAL_TOKENS: Record<number, NoxToken[]> = {
   421614: [
     {
-      address: "0xaf88d953a1d2d4008d5e6708b2e8d4c6c7b0a5f2",
+      address: NOX_CONTRACTS.cUSDC,
       symbol: "cUSDC",
       name: "Confidential USDC",
       decimals: 6,
@@ -144,56 +154,16 @@ export const CONFIDENTIAL_TOKENS: Record<number, NoxToken[]> = {
       isConfidential: true,
     },
     {
-      address: "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
-      symbol: "cUSDT",
-      name: "Confidential USDT",
-      decimals: 6,
-      logoURI:
-        "https://tokens.1inch.io/0xdac17f958d2ee523a2206206994597c13d831ec7.png",
-      priceUSD: "1",
-      isConfidential: true,
-    },
-    {
-      address: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
-      symbol: "cWETH",
-      name: "Confidential WETH",
-      decimals: 18,
-      logoURI:
-        "https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png",
+      address: NOX_CONTRACTS.cRLC,
+      symbol: "cRLC",
+      name: "Confidential RLC",
+      decimals: 9,
+      logoURI: "https://assets.coingecko.com/coins/images/0/small/rlc.png",
+      priceUSD: "3.5",
       isConfidential: true,
     },
   ],
-  42161: [
-    {
-      address: "0xaf88d953a1d2d4008d5e6708b2e8d4c6c7b0a5f2",
-      symbol: "cUSDC",
-      name: "Confidential USDC",
-      decimals: 6,
-      logoURI:
-        "https://tokens.1inch.io/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png",
-      priceUSD: "1",
-      isConfidential: true,
-    },
-    {
-      address: "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
-      symbol: "cUSDT",
-      name: "Confidential USDT",
-      decimals: 6,
-      logoURI:
-        "https://tokens.1inch.io/0xdac17f958d2ee523a2206206994597c13d831ec7.png",
-      priceUSD: "1",
-      isConfidential: true,
-    },
-    {
-      address: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
-      symbol: "cWETH",
-      name: "Confidential WETH",
-      decimals: 18,
-      logoURI:
-        "https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png",
-      isConfidential: true,
-    },
-  ],
+  42161: [],
 };
 
 export function isConfidentialToken(symbol: string): boolean {

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NoxQuote, NoxQuoteStep } from "@/lib/nox-types";
+import { NOX_CONTRACTS } from "@/lib/nox-types";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -7,7 +8,6 @@ export async function GET(request: Request) {
   const vaultAddress = searchParams.get("vaultAddress");
   const tokenIn = searchParams.get("tokenIn");
   const amountIn = searchParams.get("amountIn");
-  const isWrapping = searchParams.get("isWrapping") === "true";
 
   if (!vaultAddress || !tokenIn || !amountIn) {
     return NextResponse.json(
@@ -16,65 +16,130 @@ export async function GET(request: Request) {
     );
   }
 
-  const _amountBigInt = BigInt(amountIn);
+  try {
+    BigInt(amountIn);
+  } catch {
+    return NextResponse.json(
+      { error: "Invalid amount" },
+      { status: 400 },
+    );
+  }
+
+  const isUSDC = tokenIn.toLowerCase() === NOX_CONTRACTS.USDC.toLowerCase();
+  const isRLC = tokenIn.toLowerCase() === NOX_CONTRACTS.RLC.toLowerCase();
+  const iscToken =
+    tokenIn.toLowerCase() === NOX_CONTRACTS.cUSDC.toLowerCase() ||
+    tokenIn.toLowerCase() === NOX_CONTRACTS.cRLC.toLowerCase();
+
+  if (!isUSDC && !isRLC && !iscToken) {
+    return NextResponse.json(
+      { error: "Unsupported token. Only USDC, RLC, cUSDC, cRLC are supported on Arbitrum Sepolia." },
+      { status: 400 },
+    );
+  }
 
   const steps: NoxQuoteStep[] = [];
 
-  if (isWrapping) {
+  if (isUSDC || isRLC) {
     steps.push({
-      type: "wrap",
+      type: "approve",
       token: {
         address: tokenIn,
-        symbol: "USDC",
-        name: "USD Coin",
-        decimals: 6,
+        symbol: isUSDC ? "USDC" : "RLC",
+        name: isUSDC ? "USD Coin" : "iExec RLC",
+        decimals: isUSDC ? 6 : 9,
         isConfidential: false,
       },
       amount: amountIn,
-      contractAddress: "0xERC20ToERC7984Wrapper",
+      spender: vaultAddress,
+    });
+
+    steps.push({
+      type: "wrap",
+      token: {
+        address: vaultAddress,
+        symbol: isUSDC ? "cUSDC" : "cRLC",
+        name: isUSDC ? "Confidential USDC" : "Confidential RLC",
+        decimals: isUSDC ? 6 : 9,
+        isConfidential: true,
+      },
+      amount: amountIn,
+      contractAddress: vaultAddress,
+    });
+  } else {
+    steps.push({
+      type: "approve",
+      token: {
+        address: tokenIn,
+        symbol: iscToken ? (tokenIn.toLowerCase() === NOX_CONTRACTS.cUSDC.toLowerCase() ? "cUSDC" : "cRLC") : tokenIn,
+        name: iscToken ? (tokenIn.toLowerCase() === NOX_CONTRACTS.cUSDC.toLowerCase() ? "Confidential USDC" : "Confidential RLC") : tokenIn,
+        decimals: isUSDC ? 6 : 9,
+        isConfidential: true,
+      },
+      amount: amountIn,
+      spender: vaultAddress,
+    });
+
+    steps.push({
+      type: "deposit",
+      token: {
+        address: tokenIn,
+        symbol: iscToken ? (tokenIn.toLowerCase() === NOX_CONTRACTS.cUSDC.toLowerCase() ? "cUSDC" : "cRLC") : tokenIn,
+        name: iscToken ? (tokenIn.toLowerCase() === NOX_CONTRACTS.cUSDC.toLowerCase() ? "Confidential USDC" : "Confidential RLC") : tokenIn,
+        decimals: isUSDC ? 6 : 9,
+        isConfidential: true,
+      },
+      amount: amountIn,
+      contractAddress: vaultAddress,
     });
   }
 
-  steps.push({
-    type: "approve",
-    token: {
-      address: tokenIn,
-      symbol: isWrapping ? "USDC" : "cUSDC",
-      name: isWrapping ? "USD Coin" : "Confidential USDC",
-      decimals: 6,
-      isConfidential: !isWrapping,
-    },
-    amount: amountIn,
-    spender: vaultAddress,
-  });
-
-  steps.push({
-    type: "deposit",
-    token: {
-      address: tokenIn,
-      symbol: isWrapping ? "cUSDC" : "cUSDC",
-      name: isWrapping ? "Confidential USDC" : "Confidential USDC",
-      decimals: 6,
-      isConfidential: true,
-    },
-    amount: amountIn,
-    contractAddress: vaultAddress,
-  });
+  const tokenOutSymbol = isUSDC
+    ? "cUSDC"
+    : isRLC
+      ? "cRLC"
+      : tokenIn.toLowerCase() === NOX_CONTRACTS.cUSDC.toLowerCase()
+        ? "cUSDC"
+        : "cRLC";
+  const tokenOutName = isUSDC
+    ? "Confidential USDC"
+    : isRLC
+      ? "Confidential RLC"
+      : tokenIn.toLowerCase() === NOX_CONTRACTS.cUSDC.toLowerCase()
+        ? "Confidential USDC"
+        : "Confidential RLC";
+  const tokenOutDecimals = isUSDC || iscToken ? 6 : 9;
 
   const quote: NoxQuote = {
     vaultAddress,
     tokenIn: {
       address: tokenIn,
-      symbol: isWrapping ? "USDC" : "cUSDC",
-      name: isWrapping ? "USD Coin" : "Confidential USDC",
-      decimals: 6,
-      isConfidential: !isWrapping,
+      symbol: isUSDC
+        ? "USDC"
+        : isRLC
+          ? "RLC"
+          : tokenIn.toLowerCase() === NOX_CONTRACTS.cUSDC.toLowerCase()
+            ? "cUSDC"
+            : "cRLC",
+      name: isUSDC
+        ? "USD Coin"
+        : isRLC
+          ? "iExec RLC"
+          : tokenIn.toLowerCase() === NOX_CONTRACTS.cUSDC.toLowerCase()
+            ? "Confidential USDC"
+            : "Confidential RLC",
+      decimals: isUSDC || iscToken ? 6 : 9,
+      isConfidential: iscToken,
     },
     tokenOut: {
-      address: tokenIn,
-      symbol: "cUSDC",
-      name: "Confidential USDC",
-      decimals: 6,
+      address: isUSDC
+        ? NOX_CONTRACTS.cUSDC
+        : isRLC
+          ? NOX_CONTRACTS.cRLC
+          : tokenIn,
+      symbol: tokenOutSymbol,
+      name: tokenOutName,
+      decimals: tokenOutDecimals,
       isConfidential: true,
     },
     amountIn,

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NoxPortfolio } from "@/lib/nox-types";
+import { NOX_CONTRACTS } from "@/lib/nox-types";
 
 export async function GET(
   _request: Request,
@@ -11,47 +12,55 @@ export async function GET(
     return NextResponse.json({ data: [], total: 0 });
   }
 
-  const mockPortfolio: NoxPortfolio[] = [
+  const isValidAddress = /^0x[a-fA-F0-9]{40}$/.test(address);
+  if (!isValidAddress) {
+    return NextResponse.json({ data: [], total: 0 });
+  }
+
+  const portfolio: NoxPortfolio[] = [
     {
       chainId: 421614,
-      vaultAddress: "0x1234567890123456789012345678901234567890",
+      vaultAddress: NOX_CONTRACTS.cUSDC,
       vaultName: "Confidential USDC Vault",
-      protocol: "Nox Lending",
+      protocol: "Nox Protocol",
       token: {
-        address: "0xaf88d953a1d2d4008d5e6708b2e8d4c6c7b0a5f2",
+        address: NOX_CONTRACTS.cUSDC,
         symbol: "cUSDC",
         name: "Confidential USDC",
         decimals: 6,
+        logoURI:
+          "https://tokens.1inch.io/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png",
         priceUSD: "1",
         isConfidential: true,
       },
-      balance: "1000000000",
-      balanceUSD: "1000",
+      balance: "0",
+      balanceUSD: "0",
       apy: 5.7,
       isConfidential: true,
     },
     {
       chainId: 421614,
-      vaultAddress: "0x2345678901234567890123456789012345678901",
-      vaultName: "Confidential WETH Vault",
-      protocol: "Nox Lending",
+      vaultAddress: NOX_CONTRACTS.cRLC,
+      vaultName: "Confidential RLC Vault",
+      protocol: "Nox Protocol",
       token: {
-        address: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
-        symbol: "cWETH",
-        name: "Confidential WETH",
-        decimals: 18,
-        priceUSD: "3500",
+        address: NOX_CONTRACTS.cRLC,
+        symbol: "cRLC",
+        name: "Confidential RLC",
+        decimals: 9,
+        logoURI: "https://assets.coingecko.com/coins/images/0/small/rlc.png",
+        priceUSD: "3.5",
         isConfidential: true,
       },
-      balance: "1000000000000000000",
-      balanceUSD: "3500",
+      balance: "0",
+      balanceUSD: "0",
       apy: 4.0,
       isConfidential: true,
     },
   ];
 
   return NextResponse.json({
-    data: mockPortfolio,
-    total: mockPortfolio.length,
+    data: portfolio,
+    total: portfolio.length,
   });
 }
