@@ -32,7 +32,10 @@ function mapNoxVault(vault: NoxVault): VaultStrategy {
   };
 }
 
-function inferRisk(apyPercent: number, tvlUsd: number): "low" | "medium" | "high" {
+function inferRisk(
+  apyPercent: number,
+  tvlUsd: number,
+): "low" | "medium" | "high" {
   if (apyPercent >= 40) return "high";
   if (apyPercent >= 12) return "medium";
   if (tvlUsd >= 5_000_000) return "low";
