@@ -45,8 +45,7 @@ export function WalletButton({ variant = "desktop" }: WalletButtonProps) {
         authenticationStatus,
         mounted,
       }) => {
-        const connectReady =
-          mounted && authenticationStatus !== "loading";
+        const connectReady = mounted && authenticationStatus !== "loading";
         const connected =
           connectReady &&
           account &&
