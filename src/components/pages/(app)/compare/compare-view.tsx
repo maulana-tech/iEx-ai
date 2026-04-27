@@ -4,13 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useEffect, useMemo } from "react";
-import {
-  FiCheck,
-  FiExternalLink,
-  FiPlus,
-  FiTrash2,
-  FiX,
-} from "react-icons/fi";
+import { FiCheck, FiExternalLink, FiPlus, FiTrash2, FiX } from "react-icons/fi";
 
 const IEX_AI_LOGO = "/Assets/Images/Logo-Brand/logo-transparent.png";
 import {
@@ -67,9 +61,10 @@ export function CompareView() {
     loadMeta();
   }, [loadMeta]);
 
-  const winners = useMemo(() => computeWinners(selectedVaults), [
-    selectedVaults,
-  ]);
+  const winners = useMemo(
+    () => computeWinners(selectedVaults),
+    [selectedVaults],
+  );
 
   const slots = useMemo(() => {
     const filled = selectedVaults.map((vault) => ({ vault }));
@@ -101,8 +96,8 @@ export function CompareView() {
           </h1>
           <p className="max-w-2xl text-sm text-muted">
             Pick up to {COMPARE_MAX_SLOTS} vaults from{" "}
-            <span className="font-semibold text-main">Nox Protocol</span> and see
-            APY, TVL, and risk laid out next to each other. Best metric in
+            <span className="font-semibold text-main">Nox Protocol</span> and
+            see APY, TVL, and risk laid out next to each other. Best metric in
             each row gets a winner badge — pick your route faster.
           </p>
         </header>
@@ -119,8 +114,8 @@ export function CompareView() {
               </span>
               <span className="hidden h-3 w-px bg-(--color-line) sm:inline" />
               <span className="hidden sm:inline">
-                Tap a vault card on the right to add another, or remove with
-                the × icon.
+                Tap a vault card on the right to add another, or remove with the
+                × icon.
               </span>
             </div>
             <button
@@ -146,7 +141,6 @@ export function CompareView() {
         )}
 
         <ComparePromptHint show={!isEmpty} />
-
 
         <Footer />
       </main>
@@ -373,7 +367,10 @@ function ComparePromptHint({ show }: { show: boolean }) {
   if (!show) return null;
   return (
     <p className="text-center text-[11px] text-faint">
-      Click <span className="font-semibold text-muted">Supply to this vault</span> on any column to enter an amount and deposit in one signed transaction — no need to leave this page.
+      Click{" "}
+      <span className="font-semibold text-muted">Supply to this vault</span> on
+      any column to enter an amount and deposit in one signed transaction — no
+      need to leave this page.
     </p>
   );
 }
@@ -528,8 +525,8 @@ function EmptyState({ onAdd }: { onAdd: () => void }) {
         </h2>
         <p className="text-sm text-muted">
           Add up to {COMPARE_MAX_SLOTS} vaults from any protocol on Arbitrum,
-          Base, Ethereum and more. We'll lay out APY, TVL, risk, and lock
-          terms side-by-side so you can pick the best route in seconds.
+          Base, Ethereum and more. We'll lay out APY, TVL, risk, and lock terms
+          side-by-side so you can pick the best route in seconds.
         </p>
       </div>
       <button
@@ -569,9 +566,7 @@ function computeWinners(vaults: VaultStrategy[]): WinnerMap {
   const withApy30 = vaults.filter((v) => v.apy30d !== null);
   const bestApy30 =
     withApy30.length > 0
-      ? withApy30.reduce((a, b) =>
-          (b.apy30d ?? 0) > (a.apy30d ?? 0) ? b : a,
-        )
+      ? withApy30.reduce((a, b) => ((b.apy30d ?? 0) > (a.apy30d ?? 0) ? b : a))
       : null;
   const bestTvl = vaults.reduce((a, b) => (b.tvlUsd > a.tvlUsd ? b : a));
   const safest = vaults.reduce((a, b) =>
