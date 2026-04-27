@@ -97,8 +97,8 @@ export function VaultPickerSheet() {
   const activeProtocolOption = useMemo(
     () =>
       protocolFilter
-        ? protocolOptions.find((option) => option.key === protocolFilter) ??
-          null
+        ? (protocolOptions.find((option) => option.key === protocolFilter) ??
+          null)
         : null,
     [protocolFilter, protocolOptions],
   );
