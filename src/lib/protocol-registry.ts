@@ -160,10 +160,20 @@ export type ResolvedProtocol = {
   protocolUrl: string | null;
 };
 
-export function resolveProtocol(rawName: string | null | undefined): ResolvedProtocol {
-  const slug = (rawName ?? "").toLowerCase().trim().replace(/[\s.]+/g, "-");
+export function resolveProtocol(
+  rawName: string | null | undefined,
+): ResolvedProtocol {
+  const slug = (rawName ?? "")
+    .toLowerCase()
+    .trim()
+    .replace(/[\s.]+/g, "-");
   if (!slug) {
-    return { slug: "", displayName: "Unknown", logoPath: null, protocolUrl: null };
+    return {
+      slug: "",
+      displayName: "Unknown",
+      logoPath: null,
+      protocolUrl: null,
+    };
   }
 
   const parts = slug.split("-");
@@ -228,7 +238,9 @@ export function resolvePositionUrl(
   const parts = protocolSlug.toLowerCase().split("-");
   const maybeVersion = parts[parts.length - 1] ?? "";
   const hasVersion = /^v\d+$/i.test(maybeVersion) && parts.length > 1;
-  const baseKey = hasVersion ? parts.slice(0, -1).join("-") : protocolSlug.toLowerCase();
+  const baseKey = hasVersion
+    ? parts.slice(0, -1).join("-")
+    : protocolSlug.toLowerCase();
 
   if (baseKey === "aave") {
     const market = AAVE_MARKETS[chainId];
