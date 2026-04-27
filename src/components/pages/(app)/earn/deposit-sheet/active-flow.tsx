@@ -40,7 +40,11 @@ import {
 } from "./deposit-sheet-utils";
 import { ConnectPrompt, Row, StepIndicator } from "./deposit-sheet-states";
 
-export function ActiveFlow({ walletAddress }: { walletAddress: `0x${string}` }) {
+export function ActiveFlow({
+  walletAddress,
+}: {
+  walletAddress: `0x${string}`;
+}) {
   const vault = useDepositStore((state) => state.vault)!;
   const token = useDepositStore((state) => state.token)!;
   const chain = useDepositStore((state) => state.chain)!;
@@ -145,8 +149,7 @@ export function ActiveFlow({ walletAddress }: { walletAddress: `0x${string}` }) 
 
       const lowerFromToken = fromTokenAddress.toLowerCase();
       const isNative = NATIVE_TOKEN_ADDRESSES.has(lowerFromToken);
-      const isWrapAndDeposit =
-        quote.tool === ERC4626_WRAP_AND_DEPOSIT_TOOL;
+      const isWrapAndDeposit = quote.tool === ERC4626_WRAP_AND_DEPOSIT_TOOL;
       const isDirectDeposit = quote.tool === ERC4626_DIRECT_DEPOSIT_TOOL;
       const amountNeeded = BigInt(quote.action.fromAmount);
       const wrappedAddress = vault.tokenAddress as `0x${string}`;
@@ -179,10 +182,7 @@ export function ActiveFlow({ walletAddress }: { walletAddress: `0x${string}` }) 
             address: wrappedAddress,
             abi: ERC20_ABI,
             functionName: "approve",
-            args: [
-              quote.transactionRequest.to as `0x${string}`,
-              amountNeeded,
-            ],
+            args: [quote.transactionRequest.to as `0x${string}`, amountNeeded],
             chainId: chain.id,
           });
           await waitForTransactionReceipt(wagmiConfig, {
@@ -192,9 +192,11 @@ export function ActiveFlow({ walletAddress }: { walletAddress: `0x${string}` }) 
         }
       } else if (!isNative && approvalAddress) {
         setStep("approving");
-        const allowanceTarget = (isDirectDeposit
-          ? (quote.transactionRequest.to as `0x${string}`)
-          : approvalAddress) as `0x${string}`;
+        const allowanceTarget = (
+          isDirectDeposit
+            ? (quote.transactionRequest.to as `0x${string}`)
+            : approvalAddress
+        ) as `0x${string}`;
         const currentAllowance = (await readContract(wagmiConfig, {
           address: lowerFromToken as `0x${string}`,
           abi: ERC20_ABI,
@@ -248,9 +250,8 @@ export function ActiveFlow({ walletAddress }: { walletAddress: `0x${string}` }) 
     } catch (err) {
       const raw = (err as Error).message || "Transaction failed";
       const firstLine = raw.split("\n")[0];
-      const clean = firstLine.length > 200
-        ? `${firstLine.slice(0, 200)}\u2026`
-        : firstLine;
+      const clean =
+        firstLine.length > 200 ? `${firstLine.slice(0, 200)}\u2026` : firstLine;
       setError(clean);
       setStep("error");
     }
@@ -286,7 +287,9 @@ export function ActiveFlow({ walletAddress }: { walletAddress: `0x${string}` }) 
           </div>
         </div>
         <div className="rounded-2xl bg-surface-raised p-4">
-          <span className="text-xs font-medium text-muted">Amount to supply</span>
+          <span className="text-xs font-medium text-muted">
+            Amount to supply
+          </span>
           <div className="mt-2 flex items-center gap-3">
             <input
               type="text"
@@ -586,9 +589,9 @@ export function ActiveFlow({ walletAddress }: { walletAddress: `0x${string}` }) 
               Cross-chain deposit
             </p>
             <p className="mt-0.5 text-[11px] text-muted">
-              Nox Protocol will bridge your {token.symbol} from {chain.shortName} to{" "}
-              {vault.chainShortName} and deposit it into {vault.protocol} in a
-              single signed transaction.
+              Nox Protocol will bridge your {token.symbol} from{" "}
+              {chain.shortName} to {vault.chainShortName} and deposit it into{" "}
+              {vault.protocol} in a single signed transaction.
             </p>
           </div>
         </div>
@@ -604,10 +607,7 @@ export function ActiveFlow({ walletAddress }: { walletAddress: `0x${string}` }) 
           label="Minimum received"
           value={`${toAmountMinDisplay} ${quote.action.toToken?.symbol ?? ""}`}
         />
-        <Row
-          label="Network fee"
-          value={formatUsdString(gasUsd)}
-        />
+        <Row label="Network fee" value={formatUsdString(gasUsd)} />
         {bridgeFeeUsd && bridgeFeeUsd > 0 ? (
           <Row
             label="Route fee"
@@ -653,9 +653,7 @@ export function ActiveFlow({ walletAddress }: { walletAddress: `0x${string}` }) 
               : "Confirm in your wallet"}
           </>
         ) : (
-          <>
-            Confirm deposit
-          </>
+          <>Confirm deposit</>
         )}
       </button>
 
