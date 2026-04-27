@@ -48,13 +48,20 @@ export async function fetchLifiMeta(
   }
   const raw = await response.json();
   return {
-    chains: (raw.chains ?? []).map((c: { id: number; name: string; shortName: string; logoURI?: string }) => ({
-      id: c.id,
-      key: c.shortName?.toLowerCase().replace(/\s+/g, "-") ?? String(c.id),
-      name: c.name,
-      logoURI: c.logoURI,
-      chainType: "EVM",
-    })),
+    chains: (raw.chains ?? []).map(
+      (c: {
+        id: number;
+        name: string;
+        shortName: string;
+        logoURI?: string;
+      }) => ({
+        id: c.id,
+        key: c.shortName?.toLowerCase().replace(/\s+/g, "-") ?? String(c.id),
+        name: c.name,
+        logoURI: c.logoURI,
+        chainType: "EVM",
+      }),
+    ),
     tokens: raw.tokens ?? {},
     protocols: [],
   } as LifiMetaResponse;
