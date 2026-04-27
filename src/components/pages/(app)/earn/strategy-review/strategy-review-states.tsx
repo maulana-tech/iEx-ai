@@ -14,7 +14,9 @@ export function EmptyReview({ isLoading }: { isLoading: boolean }) {
     >
       <FiInbox className="h-5 w-5 text-muted" />
       <p className="text-xs font-semibold text-main">
-        {isLoading ? "Fetching vault strategies\u2026" : "No vault selected yet"}
+        {isLoading
+          ? "Fetching vault strategies\u2026"
+          : "No vault selected yet"}
       </p>
       <p className="max-w-xs text-[11px] text-muted">
         Enter an amount and pick a route from the Vault Aggregator on the right
