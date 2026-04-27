@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  FiCheck,
-  FiClock,
-  FiCopy,
-  FiExternalLink,
-} from "react-icons/fi";
+import { FiCheck, FiClock, FiCopy, FiExternalLink } from "react-icons/fi";
 import { HiOutlineShieldCheck } from "react-icons/hi2";
 import { motion } from "motion/react";
 import Image from "next/image";
@@ -45,7 +40,7 @@ export function ActiveReview({
       await navigator.clipboard.writeText(vault.vaultAddress);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1600);
-    } catch { }
+    } catch {}
   }
 
   return (
