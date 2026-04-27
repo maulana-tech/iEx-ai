@@ -21,10 +21,7 @@ export async function GET(request: NextRequest) {
   const apiKey = process.env.LIFI_API_KEY;
 
   if (!apiKey) {
-    return NextResponse.json(
-      { error: "missing_api_key" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "missing_api_key" }, { status: 500 });
   }
 
   const incoming = request.nextUrl.searchParams;
