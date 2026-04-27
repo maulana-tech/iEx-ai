@@ -38,7 +38,8 @@ export function Selector({
     return () => window.removeEventListener("mousedown", handleClick);
   }, [open]);
 
-  const active = options.find((item) => item.key === value) ?? options[0] ?? null;
+  const active =
+    options.find((item) => item.key === value) ?? options[0] ?? null;
 
   const filtered = useMemo(() => {
     const base = search.trim()
@@ -70,10 +71,14 @@ export function Selector({
         }}
         className={`${triggerClass} ${locked ? "cursor-default" : "disabled:cursor-not-allowed"}`}
         whileHover={
-          options.length > 0 && !loading && !locked ? { scale: 1.03 } : undefined
+          options.length > 0 && !loading && !locked
+            ? { scale: 1.03 }
+            : undefined
         }
         whileTap={
-          options.length > 0 && !loading && !locked ? { scale: 0.96 } : undefined
+          options.length > 0 && !loading && !locked
+            ? { scale: 0.96 }
+            : undefined
         }
         transition={{ type: "spring", stiffness: 500, damping: 30 }}
       >
