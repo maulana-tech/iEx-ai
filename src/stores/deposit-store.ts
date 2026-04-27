@@ -252,7 +252,8 @@ export const useDepositStore = create<DepositState>((set, get) => ({
       error: null,
       txHash: null,
     }),
-  setAmount: (amount) => set({ amount, quote: null, step: "idle", error: null }),
+  setAmount: (amount) =>
+    set({ amount, quote: null, step: "idle", error: null }),
   fetchQuote: async (fromAddress, config) => {
     const { vault, token, chain, amount, fromTokenAddress, fromTokenDecimals } =
       get();
