@@ -19,10 +19,7 @@ export async function GET(request: Request) {
   try {
     BigInt(amountIn);
   } catch {
-    return NextResponse.json(
-      { error: "Invalid amount" },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
   }
 
   const isUSDC = tokenIn.toLowerCase() === NOX_CONTRACTS.USDC.toLowerCase();
@@ -33,7 +30,10 @@ export async function GET(request: Request) {
 
   if (!isUSDC && !isRLC && !iscToken) {
     return NextResponse.json(
-      { error: "Unsupported token. Only USDC, RLC, cUSDC, cRLC are supported on Arbitrum Sepolia." },
+      {
+        error:
+          "Unsupported token. Only USDC, RLC, cUSDC, cRLC are supported on Arbitrum Sepolia.",
+      },
       { status: 400 },
     );
   }
@@ -71,8 +71,16 @@ export async function GET(request: Request) {
       type: "approve",
       token: {
         address: tokenIn,
-        symbol: iscToken ? (tokenIn.toLowerCase() === NOX_CONTRACTS.cUSDC.toLowerCase() ? "cUSDC" : "cRLC") : tokenIn,
-        name: iscToken ? (tokenIn.toLowerCase() === NOX_CONTRACTS.cUSDC.toLowerCase() ? "Confidential USDC" : "Confidential RLC") : tokenIn,
+        symbol: iscToken
+          ? tokenIn.toLowerCase() === NOX_CONTRACTS.cUSDC.toLowerCase()
+            ? "cUSDC"
+            : "cRLC"
+          : tokenIn,
+        name: iscToken
+          ? tokenIn.toLowerCase() === NOX_CONTRACTS.cUSDC.toLowerCase()
+            ? "Confidential USDC"
+            : "Confidential RLC"
+          : tokenIn,
         decimals: isUSDC ? 6 : 9,
         isConfidential: true,
       },
@@ -84,8 +92,16 @@ export async function GET(request: Request) {
       type: "deposit",
       token: {
         address: tokenIn,
-        symbol: iscToken ? (tokenIn.toLowerCase() === NOX_CONTRACTS.cUSDC.toLowerCase() ? "cUSDC" : "cRLC") : tokenIn,
-        name: iscToken ? (tokenIn.toLowerCase() === NOX_CONTRACTS.cUSDC.toLowerCase() ? "Confidential USDC" : "Confidential RLC") : tokenIn,
+        symbol: iscToken
+          ? tokenIn.toLowerCase() === NOX_CONTRACTS.cUSDC.toLowerCase()
+            ? "cUSDC"
+            : "cRLC"
+          : tokenIn,
+        name: iscToken
+          ? tokenIn.toLowerCase() === NOX_CONTRACTS.cUSDC.toLowerCase()
+            ? "Confidential USDC"
+            : "Confidential RLC"
+          : tokenIn,
         decimals: isUSDC ? 6 : 9,
         isConfidential: true,
       },
