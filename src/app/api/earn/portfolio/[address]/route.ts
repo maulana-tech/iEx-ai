@@ -16,10 +16,7 @@ export async function GET(
   const { address } = await context.params;
 
   if (!ADDRESS_PATTERN.test(address)) {
-    return NextResponse.json(
-      { error: "invalid_address" },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "invalid_address" }, { status: 400 });
   }
 
   const apiKey = process.env.LIFI_API_KEY;
@@ -27,13 +24,10 @@ export async function GET(
   if (apiKey) headers["x-lifi-api-key"] = apiKey;
 
   try {
-    const upstream = await fetch(
-      `${LIFI_PORTFOLIO_URL}/${address}/positions`,
-      {
-        headers,
-        cache: "no-store",
-      },
-    );
+    const upstream = await fetch(`${LIFI_PORTFOLIO_URL}/${address}/positions`, {
+      headers,
+      cache: "no-store",
+    });
 
     const text = await upstream.text();
     if (!upstream.ok) {
