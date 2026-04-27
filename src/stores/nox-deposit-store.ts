@@ -1,12 +1,9 @@
-import {
-  waitForTransactionReceipt,
-  writeContract,
-} from "@wagmi/core";
+import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { erc20Abi, parseUnits } from "viem";
 import type { Config } from "wagmi";
 import { create } from "zustand";
-import type { NoxQuote } from "@/lib/nox-types";
-import { NOX_CONTRACTS } from "@/lib/nox-types";
+import { getUnderlyingForToken, getVaultForToken } from "@/lib/nox-types";
+import { NOX_YIELD_VAULT_ABI } from "@/lib/nox-vault-contract";
 import type { Chain, Token, VaultStrategy } from "@/types";
 
 export type DepositStep =
@@ -15,6 +12,7 @@ export type DepositStep =
   | "ready"
   | "approving"
   | "wrapping"
+  | "depositing"
   | "success"
   | "error";
 
@@ -46,7 +44,7 @@ type DepositState = {
   amount: string;
   fromTokenAddress: string | null;
   fromTokenDecimals: number;
-  quote: NoxQuote | null;
+  quote: Record<string, unknown> | null;
   step: DepositStep;
   error: string | null;
   txHash: string | null;
@@ -120,7 +118,8 @@ export const useNoxDepositStore = create<DepositState>((set, get) => ({
       txHash: null,
     }),
 
-  setAmount: (amount) => set({ amount, quote: null, step: "idle", error: null }),
+  setAmount: (amount) =>
+    set({ amount, quote: null, step: "idle", error: null }),
 
   fetchQuote: async (_fromAddress, _config) => {
     const { vault, token, chain, amount, fromTokenAddress } = get();
@@ -149,7 +148,20 @@ export const useNoxDepositStore = create<DepositState>((set, get) => ({
       const amountBigInt = parseUnits(amount, vault.tokenDecimals);
 
       const cTokenAddress = vault.tokenAddress as `0x${string}`;
-      const underlyingAddress = NOX_CONTRACTS.USDC as `0x${string}`;
+      const underlyingAddress = getUnderlyingForToken(vault.tokenAddress);
+      const yieldVaultAddress = getVaultForToken(vault.tokenAddress);
+
+      const isZeroVault =
+        yieldVaultAddress === "0x0000000000000000000000000000000000000000";
+
+      if (isZeroVault) {
+        set({
+          step: "error",
+          error:
+            "Vault contract not deployed yet. Please deploy NoxYieldVault first.",
+        });
+        return;
+      }
 
       const approveHash = await writeContract(config, {
         address: underlyingAddress,
@@ -176,7 +188,32 @@ export const useNoxDepositStore = create<DepositState>((set, get) => ({
         chainId: chain.id,
       });
 
-      set({ txHash: wrapHash, step: "success" });
+      set({ step: "depositing" });
+      const approveVaultHash = await writeContract(config, {
+        address: cTokenAddress,
+        abi: erc20Abi,
+        functionName: "approve",
+        args: [yieldVaultAddress, amountBigInt],
+        chainId: chain.id,
+      });
+      await waitForTransactionReceipt(config, {
+        hash: approveVaultHash,
+        chainId: chain.id,
+      });
+
+      const depositHash = await writeContract(config, {
+        address: yieldVaultAddress,
+        abi: NOX_YIELD_VAULT_ABI,
+        functionName: "deposit",
+        args: [amountBigInt, account],
+        chainId: chain.id,
+      });
+      await waitForTransactionReceipt(config, {
+        hash: depositHash,
+        chainId: chain.id,
+      });
+
+      set({ txHash: depositHash, step: "success" });
     } catch (error) {
       const message = (error as Error).message || "Deposit failed";
       set({ step: "error", error: friendlyError(message) });
