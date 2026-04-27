@@ -1,7 +1,12 @@
 "use client";
 
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { FiAlertTriangle, FiCheck, FiExternalLink, FiLoader } from "react-icons/fi";
+import {
+  FiAlertTriangle,
+  FiCheck,
+  FiExternalLink,
+  FiLoader,
+} from "react-icons/fi";
 import { HiOutlineWallet } from "react-icons/hi2";
 import { motion } from "motion/react";
 
@@ -23,8 +28,8 @@ export function ConnectPrompt() {
       <div>
         <p className="text-sm font-semibold text-main">Connect your wallet</p>
         <p className="mx-auto mt-1 max-w-xs text-xs text-muted">
-          You&apos;ll need a connected wallet to sign the withdrawal
-          transaction on-chain.
+          You&apos;ll need a connected wallet to sign the withdrawal transaction
+          on-chain.
         </p>
       </div>
       <ConnectButton.Custom>
