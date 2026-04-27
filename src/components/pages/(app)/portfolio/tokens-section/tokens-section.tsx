@@ -4,7 +4,12 @@ import { HiOutlineBanknotes } from "react-icons/hi2";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import type { PortfolioHolding } from "@/lib/portfolio-fetcher";
-import { formatAmount, formatPrice, formatUsd, SKELETON_ROWS } from "./tokens-section-utils";
+import {
+  formatAmount,
+  formatPrice,
+  formatUsd,
+  SKELETON_ROWS,
+} from "./tokens-section-utils";
 
 type TokensSectionProps = {
   holdings: PortfolioHolding[];
@@ -12,10 +17,7 @@ type TokensSectionProps = {
   networkFilter: number | "all";
 };
 
-export function TokensSection({
-  holdings,
-  status,
-}: TokensSectionProps) {
+export function TokensSection({ holdings, status }: TokensSectionProps) {
   const isLoading = status === "loading" || status === "idle";
   const isEmpty = status === "ready" && holdings.length === 0;
 
