@@ -49,8 +49,7 @@ export function ShareCard({
   }
 
   function handleShareX() {
-    const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
     const shareUrl = `${baseUrl}/share/${address}`;
     const text = encodeURIComponent(buildCaption());
     const url = encodeURIComponent(shareUrl);
@@ -73,7 +72,8 @@ export function ShareCard({
       link.download = "iex-ai-earn.png";
       link.href = dataUrl;
       link.click();
-    } catch { } finally {
+    } catch {
+    } finally {
       setExporting(false);
     }
   }, [exporting]);
@@ -111,10 +111,14 @@ export function ShareCard({
                     "linear-gradient(165deg, #131316 0%, #0d0e0f 40%, #111118 100%)",
                 }}
               >
-                <div className="absolute inset-0 opacity-[0.03]" style={{
-                  backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
-                  backgroundSize: "24px 24px",
-                }} />
+                <div
+                  className="absolute inset-0 opacity-[0.03]"
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
+                    backgroundSize: "24px 24px",
+                  }}
+                />
 
                 <div className="relative flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -202,8 +206,22 @@ export function ShareCard({
                           border: "1px solid #2c2c31",
                         }}
                       >
-                        <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
-                          <div style={{ position: "relative", width: 36, height: 36, flexShrink: 0 }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 10,
+                            minWidth: 0,
+                          }}
+                        >
+                          <div
+                            style={{
+                              position: "relative",
+                              width: 36,
+                              height: 36,
+                              flexShrink: 0,
+                            }}
+                          >
                             {resolved.logoPath ? (
                               <img
                                 src={resolved.logoPath}
@@ -256,7 +274,13 @@ export function ShareCard({
                               />
                             ) : null}
                           </div>
-                          <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              minWidth: 0,
+                            }}
+                          >
                             <span
                               style={{
                                 fontSize: 13,
@@ -320,7 +344,9 @@ export function ShareCard({
                     borderTop: "1px solid #2c2c31",
                   }}
                 >
-                  <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 5 }}
+                  >
                     <span
                       style={{
                         fontSize: 10,
@@ -338,7 +364,9 @@ export function ShareCard({
                       style={{ width: 14, height: 14, objectFit: "contain" }}
                     />
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 5 }}
+                  >
                     <span
                       style={{
                         fontSize: 10,
