@@ -96,7 +96,8 @@ function resolveChainShortName(chainId: number): string {
 }
 
 function toNumber(value: unknown, fallback = 0): number {
-  if (typeof value === "number") return Number.isFinite(value) ? value : fallback;
+  if (typeof value === "number")
+    return Number.isFinite(value) ? value : fallback;
   if (typeof value === "string") {
     const parsed = Number.parseFloat(value);
     return Number.isFinite(parsed) ? parsed : fallback;
@@ -107,9 +108,10 @@ function toNumber(value: unknown, fallback = 0): number {
 function mapVault(vault: NoxVault): VaultStrategy {
   const tvlUsd = toNumber(vault.tvl?.usd, 0);
   const apyPercent = toNumber(vault.apy?.total, 0);
-  const apy30dPercent = vault.apy30d === null || vault.apy30d === undefined
-    ? null
-    : toNumber(vault.apy30d, 0);
+  const apy30dPercent =
+    vault.apy30d === null || vault.apy30d === undefined
+      ? null
+      : toNumber(vault.apy30d, 0);
   const underlying = vault.underlyingToken;
   const rawProtocolName = vault.protocol ?? "Unknown";
 
