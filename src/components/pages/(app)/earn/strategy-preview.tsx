@@ -4,11 +4,7 @@ import Image from "next/image";
 import { FiArrowRight, FiCheckCircle } from "react-icons/fi";
 import { useExpertStore } from "@/stores";
 
-const PREVIEW_FEATURES = [
-  "Live APY + TVL",
-  "Risk tier",
-  "One-click route",
-];
+const PREVIEW_FEATURES = ["Live APY + TVL", "Risk tier", "One-click route"];
 
 export function StrategyPreview() {
   const amount = useExpertStore((state) => state.amount);
@@ -43,8 +39,8 @@ export function StrategyPreview() {
           Your yield route will land here
         </h3>
         <p className="text-[11px] text-muted">
-          Enter an amount to stream the selected vault details live —
-          powered by Nox Protocol.
+          Enter an amount to stream the selected vault details live — powered by
+          Nox Protocol.
         </p>
       </div>
 
