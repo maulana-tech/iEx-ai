@@ -1,8 +1,4 @@
-const CHAINGPT_API_BASE = "https://api.chaingpt.org";
-
-type ChainGPTChatResponse = {
-  text: string;
-};
+const CHAINGPT_API_BASE = "https://api.chaingpt.org/chat/stream";
 
 export async function chatWithChainGPT(
   prompt: string,
@@ -14,7 +10,7 @@ export async function chatWithChainGPT(
     return "ChainGPT API key not configured. Contact @vladnazarxyz on Telegram for free credits.";
   }
 
-  const response = await fetch(`${CHAINGPT_API_BASE}/chat`, {
+  const response = await fetch(CHAINGPT_API_BASE, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -22,8 +18,8 @@ export async function chatWithChainGPT(
     },
     body: JSON.stringify({
       model: "general_assistant",
-      messages: [{ role: "user", content: prompt }],
-      maxTokens: 500,
+      question: prompt,
+      chatHistory: "off",
     }),
     signal,
   });
@@ -32,8 +28,8 @@ export async function chatWithChainGPT(
     throw new Error(`chaingpt_failed_${response.status}`);
   }
 
-  const data = (await response.json()) as ChainGPTChatResponse;
-  return data.text ?? "No response from ChainGPT.";
+  const text = await response.text();
+  return text.trim() || "No response from ChainGPT.";
 }
 
 export async function auditSmartContract(
