@@ -31,10 +31,9 @@ async function fetchPositions(address: string): Promise<Position[]> {
   if (apiKey) headers["x-lifi-api-key"] = apiKey;
 
   try {
-    const res = await fetch(
-      `${LIFI_PORTFOLIO_URL}/${address}/positions`,
-      { headers },
-    );
+    const res = await fetch(`${LIFI_PORTFOLIO_URL}/${address}/positions`, {
+      headers,
+    });
     if (!res.ok) return [];
     const data = await res.json();
     return data.positions ?? [];
@@ -52,23 +51,21 @@ export default async function OGImage({
 
   if (!ADDRESS_PATTERN.test(address)) {
     return new ImageResponse(
-      (
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
-            height: "100%",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "#0d0e0f",
-            color: "#fff",
-            fontSize: 40,
-            fontWeight: 700,
-          }}
-        >
-          iEx AI
-        </div>
-      ),
+      <div
+        style={{
+          display: "flex",
+          width: "100%",
+          height: "100%",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#0d0e0f",
+          color: "#fff",
+          fontSize: 40,
+          fontWeight: 700,
+        }}
+      >
+        iEx AI
+      </div>,
       { ...size },
     );
   }
@@ -82,226 +79,224 @@ export default async function OGImage({
   const top = positions.slice(0, 4);
 
   return new ImageResponse(
-    (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        height: "100%",
+        backgroundColor: "#0d0e0f",
+        padding: 60,
+        gap: 32,
+      }}
+    >
       <div
         style={{
           display: "flex",
-          flexDirection: "column",
-          width: "100%",
-          height: "100%",
-          backgroundColor: "#0d0e0f",
-          padding: 60,
-          gap: 32,
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
+            gap: 16,
           }}
         >
           <div
             style={{
+              width: 48,
+              height: 48,
+              borderRadius: 14,
+              backgroundColor: "rgba(30,64,175,0.18)",
               display: "flex",
               alignItems: "center",
-              gap: 16,
+              justifyContent: "center",
+              fontSize: 24,
+              fontWeight: 700,
+              color: "#60a5fa",
             }}
           >
-            <div
-              style={{
-                width: 48,
-                height: 48,
-                borderRadius: 14,
-                backgroundColor: "rgba(30,64,175,0.18)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 24,
-                fontWeight: 700,
-                color: "#60a5fa",
-              }}
-            >
-              Y
-            </div>
-            <span
-              style={{
-                fontSize: 28,
-                fontWeight: 700,
-                color: "#ffffff",
-                letterSpacing: "-0.02em",
-              }}
-            >
-              iEx AI
-            </span>
+            Y
           </div>
           <span
             style={{
-              fontSize: 20,
-              fontWeight: 500,
-              color: "#6b6b75",
-            }}
-          >
-            {short}
-          </span>
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          <span
-            style={{
-              fontSize: 14,
-              fontWeight: 600,
-              textTransform: "uppercase",
-              letterSpacing: "0.2em",
-              color: "#6b6b75",
-            }}
-          >
-            Earning across DeFi
-          </span>
-          <span
-            style={{
-              fontSize: 72,
+              fontSize: 28,
               fontWeight: 700,
               color: "#ffffff",
-              letterSpacing: "-0.03em",
-              lineHeight: 1,
+              letterSpacing: "-0.02em",
             }}
           >
-            {formatUsd(totalUsd)}
-          </span>
-          <span
-            style={{
-              fontSize: 18,
-              fontWeight: 500,
-              color: "#6b6b75",
-              marginTop: 4,
-            }}
-          >
-            in {positions.length} active vault
-            {positions.length === 1 ? "" : "s"}
+            iEx AI
           </span>
         </div>
-
-        <div
+        <span
           style={{
-            display: "flex",
-            gap: 12,
-            flexWrap: "wrap",
-            flex: 1,
+            fontSize: 20,
+            fontWeight: 500,
+            color: "#6b6b75",
           }}
         >
-          {top.map((position, index) => {
-            const usd = Number.parseFloat(position.balanceUsd ?? "0");
-            return (
+          {short}
+        </span>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <span
+          style={{
+            fontSize: 14,
+            fontWeight: 600,
+            textTransform: "uppercase",
+            letterSpacing: "0.2em",
+            color: "#6b6b75",
+          }}
+        >
+          Earning across DeFi
+        </span>
+        <span
+          style={{
+            fontSize: 72,
+            fontWeight: 700,
+            color: "#ffffff",
+            letterSpacing: "-0.03em",
+            lineHeight: 1,
+          }}
+        >
+          {formatUsd(totalUsd)}
+        </span>
+        <span
+          style={{
+            fontSize: 18,
+            fontWeight: 500,
+            color: "#6b6b75",
+            marginTop: 4,
+          }}
+        >
+          in {positions.length} active vault
+          {positions.length === 1 ? "" : "s"}
+        </span>
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          gap: 12,
+          flexWrap: "wrap",
+          flex: 1,
+        }}
+      >
+        {top.map((position, index) => {
+          const usd = Number.parseFloat(position.balanceUsd ?? "0");
+          return (
+            <div
+              key={index}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 16,
+                backgroundColor: "rgba(27,27,31,0.9)",
+                borderRadius: 20,
+                padding: "16px 24px",
+                border: "1px solid #2c2c31",
+                flex: "1 1 45%",
+                minWidth: 460,
+              }}
+            >
               <div
-                key={index}
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 16,
-                  backgroundColor: "rgba(27,27,31,0.9)",
-                  borderRadius: 20,
-                  padding: "16px 24px",
-                  border: "1px solid #2c2c31",
-                  flex: "1 1 45%",
-                  minWidth: 460,
+                  gap: 14,
                 }}
               >
                 <div
                   style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: "50%",
+                    backgroundColor: "rgba(30,64,175,0.18)",
                     display: "flex",
                     alignItems: "center",
-                    gap: 14,
+                    justifyContent: "center",
+                    fontSize: 18,
+                    fontWeight: 600,
+                    color: "#60a5fa",
                   }}
                 >
-                  <div
+                  {position.protocolName.charAt(0).toUpperCase()}
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                  }}
+                >
+                  <span
                     style={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: "50%",
-                      backgroundColor: "rgba(30,64,175,0.18)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
                       fontSize: 18,
                       fontWeight: 600,
-                      color: "#60a5fa",
+                      color: "#ffffff",
                     }}
                   >
-                    {position.protocolName.charAt(0).toUpperCase()}
-                  </div>
-                  <div
+                    {position.protocolName}
+                  </span>
+                  <span
                     style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 2,
+                      fontSize: 14,
+                      fontWeight: 500,
+                      color: "#6b6b75",
                     }}
                   >
-                    <span
-                      style={{
-                        fontSize: 18,
-                        fontWeight: 600,
-                        color: "#ffffff",
-                      }}
-                    >
-                      {position.protocolName}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: 14,
-                        fontWeight: 500,
-                        color: "#6b6b75",
-                      }}
-                    >
-                      {position.asset.symbol}
-                    </span>
-                  </div>
+                    {position.asset.symbol}
+                  </span>
                 </div>
-                <span
-                  style={{
-                    fontSize: 20,
-                    fontWeight: 600,
-                    color: "#ffffff",
-                  }}
-                >
-                  {formatUsd(usd)}
-                </span>
               </div>
-            );
-          })}
-        </div>
+              <span
+                style={{
+                  fontSize: 20,
+                  fontWeight: 600,
+                  color: "#ffffff",
+                }}
+              >
+                {formatUsd(usd)}
+              </span>
+            </div>
+          );
+        })}
+      </div>
 
-        <div
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          borderTop: "1px solid #2c2c31",
+          paddingTop: 20,
+        }}
+      >
+        <span
           style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            borderTop: "1px solid #2c2c31",
-            paddingTop: 20,
+            fontSize: 16,
+            fontWeight: 600,
+            color: "#6b6b75",
           }}
         >
-          <span
-            style={{
-              fontSize: 16,
-              fontWeight: 600,
-              color: "#6b6b75",
-            }}
-          >
-            Earn with iEx AI
-          </span>
-          <span
-            style={{
-              fontSize: 14,
-              fontWeight: 500,
-              color: "#6b6b75",
-            }}
-          >
-            Powered by Nox Protocol
-          </span>
-        </div>
+          Earn with iEx AI
+        </span>
+        <span
+          style={{
+            fontSize: 14,
+            fontWeight: 500,
+            color: "#6b6b75",
+          }}
+        >
+          Powered by Nox Protocol
+        </span>
       </div>
-    ),
+    </div>,
     { ...size },
   );
 }
