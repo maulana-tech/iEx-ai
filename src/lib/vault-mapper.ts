@@ -3,10 +3,7 @@ import type { LifiVault } from "@/lib/lifi-earn";
 import { resolveProtocol } from "@/lib/protocol-registry";
 import type { VaultRisk, VaultStrategy } from "@/types";
 
-export function inferVaultRisk(
-  apyPercent: number,
-  tvlUsd: number,
-): VaultRisk {
+export function inferVaultRisk(apyPercent: number, tvlUsd: number): VaultRisk {
   if (!Number.isFinite(apyPercent) || apyPercent <= 0) return "medium";
 
   const whaleTvl = tvlUsd >= 50_000_000;
@@ -45,8 +42,7 @@ export function mapLifiVault(vault: LifiVault): VaultStrategy {
   const tvlUsd = toNumber(vault.analytics?.tvl?.usd, 0);
   const apyPercent = toNumber(vault.analytics?.apy?.total, 0);
   const apy30dPercent =
-    vault.analytics?.apy30d === null ||
-    vault.analytics?.apy30d === undefined
+    vault.analytics?.apy30d === null || vault.analytics?.apy30d === undefined
       ? null
       : toNumber(vault.analytics.apy30d, 0);
   const underlying = vault.underlyingTokens?.[0];
