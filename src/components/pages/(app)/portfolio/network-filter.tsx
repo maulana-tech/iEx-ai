@@ -15,9 +15,7 @@ export function NetworkFilter({
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const networkFilter = usePortfolioStore((state) => state.networkFilter);
-  const setNetworkFilter = usePortfolioStore(
-    (state) => state.setNetworkFilter,
-  );
+  const setNetworkFilter = usePortfolioStore((state) => state.setNetworkFilter);
 
   useEffect(() => {
     if (!open) return;
