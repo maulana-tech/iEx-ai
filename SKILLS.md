@@ -1,97 +1,97 @@
-# iExec Vibe Coding Challenge - SKILLS.md
+# iExec Vibe Coding Challenge - iEx AI
 
-## Challenge Overview
+**iEx AI** = Confidential Yield Vault Aggregator. BUILT & DEPLOYED.
 
-Build applications using Nox protocol & Confidential Tokens powered by iExec.
+## Apa Aplikasi Ini?
 
-## Required Tech Stack
+Yield farming lacks privacy. Every position, balance, and strategy is visible on-chain — exposed to MEV bots and copy-traders.
 
-### iExec Nox Protocol
-- **Nox** = Confidential computing layer (on-chain contracts + off-chain TEE)
-- Computes on encrypted data without exposing plaintext on-chain
-- Full DeFi composability maintained
+iEx AI menyelesaikan ini dengan:
+1. User deposit USDC/RLC → di-wrap ke cUSDC/cRLC (ERC-7984 confidential token)
+2. cUSDC/cRLC masuk ke ERC-4626 yield vault
+3. Balance tersembunyi dari public chain
 
-### Confidential Token
-- Reversible ERC-20 wrapper
-- Hides balances and transaction amounts
-- Stays composable with existing DeFi protocols
-- Any ERC-20 wraps into confidential equivalent
+Think: **yield aggregator meets confidential computing — Arbitrum-first.**
 
-### ChainGPT (AI Partner)
-- Smart contract generation & auditing
-- On-chain data insights
-- Free API credits available (contact @vladnazarxyz on Telegram)
+## Deployed Contracts (Arbitrum Sepolia 421614)
 
-## Setup Requirements
+### Confidential Tokens (ERC-7984)
 
-```bash
-# Install iExec Nox packages
-npm install @iexec-nox/<package>
+| Token | Address | Standard |
+|-------|---------|----------|
+| USDC | `0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d` | ERC-20 |
+| **cUSDC** | `0x1ccec6bc60db15e4055d43dc2531bb7d4e5b808e` | ERC-7984 |
+| RLC | `0x9923eD3cbd90CD78b910c475f9A731A6e0b8C963` | ERC-20 |
+| **cRLC** | `0x92b23f4a59175415ced5cb37e64a1fc6a9d79af4` | ERC-7984 |
 
-# Deploy to Arbitrum Sepolia or Arbitrum Mainnet
-# Get test tokens from faucet if needed
+### Yield Vaults (ERC-4626) — TODO: Deploy
+
+| Vault | Asset | Contract |
+|-------|-------|----------|
+| NoxYieldVault cUSDC | cUSDC | `contracts/NoxYieldVault.sol` |
+| NoxYieldVault cRLC | cRLC | `contracts/NoxYieldVault.sol` |
+
+**Deploy steps:**
+1. Open Remix (remix.ethereum.org) or use Foundry
+2. Deploy `NoxYieldVault` with:
+   - `asset_` = cUSDC address
+   - `name_` = "Nox cUSDC Vault"
+   - `symbol_` = "nvUSDC"
+3. Repeat for cRLC
+4. Update `NOX_VAULTS` in `src/lib/nox-types.ts` with deployed addresses
+
+## Flows
+
+### Deposit (3 steps)
+```
+USDC → Approve cUSDC → Wrap to cUSDC → Approve Vault → Deposit to Vault
 ```
 
-## Key Resources
+### Withdraw (2 steps)
+```
+Redeem shares from Vault → Unwrap cUSDC → USDC
+```
 
-| Resource | URL |
-|----------|-----|
-| Documentation | https://docs.iex.ec/nox-protocol/getting-started/welcome |
-| NPM Packages | https://www.npmjs.com/org/iexec-nox |
-| Contract Wizard | https://cdefi-wizard.iex.ec/ |
-| Confidential Token Demo | https://cdefi.iex.ec/ |
-| Discord | https://discord.gg/RXYHBJceMe |
+### Portfolio (on-chain read)
+```
+vault.balanceOf(user) → calculate share value → display
+```
 
-## Submission Requirements
+## Setup & Run
 
-1. **X Post** with:
-   - Project description
-   - Demo video
-   - GitHub repository link
-   - Tag @iExecDev and @Chain_GPT
+```bash
+cp .env.example .env.local
+pnpm install
+pnpm dev
+```
 
-2. **GitHub Repository** must contain:
-   - Complete open-source code
-   - README with installation/usage instructions
-   - `feedback.md` doc with iExec tools feedback
-   - Functional front-end
+Buka http://localhost:3000/earn
 
-3. **Demo Video:** 4 minutes max
+## Architecture
 
-## Evaluation Criteria
+- **Nox Protocol** — confidential vault (API: `src/app/api/nox/*`)
+- **LI.FI** — general earn fallback (API: `src/app/api/earn/*`)
+- **ERC-4626 Vault** — `contracts/NoxYieldVault.sol` (ABI: `src/lib/nox-vault-contract.ts`)
+- Handle client: `@/lib/nox-handle.ts`
 
-| Criteria | Weight |
-|----------|--------|
-| End-to-end functionality (no mock data) | Required |
-| Deployed on Arbitrum Sepolia or Arbitrum | Required |
-| Technical implementation quality | High |
-| Real-world use case relevance | High |
-| Code quality (vibe-coded but maintainable) | Medium |
-| UX/UI intuitiveness | Medium |
+## Key Files
 
-## Project Ideas
+| Path | Purpose |
+|------|---------|
+| `contracts/NoxYieldVault.sol` | ERC-4626 vault contract |
+| `src/lib/nox-vault-contract.ts` | Vault ABI |
+| `src/lib/nox-types.ts` | Contract addresses & types |
+| `src/stores/nox-deposit-store.ts` | Deposit flow (approve→wrap→deposit) |
+| `src/stores/nox-withdraw-store.ts` | Withdraw flow (redeem→unwrap) |
+| `src/app/api/nox/vaults/route.ts` | Real on-chain TVL/APY |
+| `src/app/api/nox/portfolio/[address]/route.ts` | Real on-chain balances |
 
-### Confidential RWA & Tokenization
-- Private tokenized stocks (cAAPL, cTSLA) using ERC-3643 + ERC-7984
-- Private securities/commodities with confidential ownership
-- Confidential yield via T-Bills/Bonds
+## Submission Checklist
 
-### Confidential DeFi
-- **Confidential Vault** - yield vaults protecting strategy positions from MEV/copy-trading (ERC-7540 + ERC-7984)
-- Private lending/borrowing/yield primitives
-- Privacy-enabled governance
-
-### Compliance Note
-ERC standards (ERC-3643, ERC-7540, ERC-7984) implementations must fully adhere to specifications including correct integration of encrypted types. Partial implementations will not be accepted.
-
-## Workshop Schedule
-
-| Workshop | Date | Topic |
-|----------|------|-------|
-| #1 | April 9, 2026 | Nox Protocol & Confidential Token Discovery |
-| #2 | April 17, 2026 | Hello World with Nox |
-| #3 | April 23, 2026 | Confidential Primitives |
-| Office Hours | April 24, 2026 | Q&A with iExec team |
-| #4 | April 30, 2026 | Build & Showcase Your Project |
-
-All sessions live on Discord and X (@iExecDev).
+- [x] Deployed on Arbitrum Sepolia
+- [x] End-to-end functionality (no mock data in code)
+- [x] cUSDC, cRLC confidential tokens (ERC-7984)
+- [x] ERC-4626 yield vault contract
+- [ ] **Deploy vault contracts** → update `NOX_VAULTS` addresses
+- [ ] **X Post** — demo video + repo link + tag @iExecDev @Chain_GPT
+- [ ] **feedback.md** — iExec tools feedback
