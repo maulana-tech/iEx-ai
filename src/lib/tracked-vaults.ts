@@ -28,7 +28,7 @@ export function getTrackedVaults(): TrackedVault[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) userVaults = JSON.parse(raw) as TrackedVault[];
-  } catch { }
+  } catch {}
 
   const keys = new Set(
     userVaults.map((v) => `${v.chainId}-${v.vaultAddress.toLowerCase()}`),
@@ -44,7 +44,9 @@ export function getTrackedVaults(): TrackedVault[] {
   return userVaults;
 }
 
-export function addTrackedVault(vault: Omit<TrackedVault, "depositedAt">): void {
+export function addTrackedVault(
+  vault: Omit<TrackedVault, "depositedAt">,
+): void {
   try {
     const existing = getTrackedVaults();
     const key = `${vault.chainId}-${vault.vaultAddress.toLowerCase()}`;
@@ -52,15 +54,17 @@ export function addTrackedVault(vault: Omit<TrackedVault, "depositedAt">): void 
       (v) => `${v.chainId}-${v.vaultAddress.toLowerCase()}` === key,
     );
     if (alreadyTracked) return;
-    const next = [
-      ...existing,
-      { ...vault, depositedAt: Date.now() },
-    ].slice(-50);
+    const next = [...existing, { ...vault, depositedAt: Date.now() }].slice(
+      -50,
+    );
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-  } catch { }
+  } catch {}
 }
 
-export function removeTrackedVault(chainId: number, vaultAddress: string): void {
+export function removeTrackedVault(
+  chainId: number,
+  vaultAddress: string,
+): void {
   try {
     const existing = getTrackedVaults();
     const key = `${chainId}-${vaultAddress.toLowerCase()}`;
@@ -68,5 +72,5 @@ export function removeTrackedVault(chainId: number, vaultAddress: string): void 
       (v) => `${v.chainId}-${v.vaultAddress.toLowerCase()}` !== key,
     );
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-  } catch { }
+  } catch {}
 }
