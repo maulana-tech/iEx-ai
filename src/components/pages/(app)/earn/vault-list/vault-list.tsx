@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  FiCheck,
-  FiClock,
-  FiExternalLink,
-} from "react-icons/fi";
+import { FiCheck, FiClock, FiExternalLink } from "react-icons/fi";
 import { HiOutlineShieldCheck, HiLockClosed } from "react-icons/hi2";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
@@ -12,7 +8,12 @@ import { useEffect, useMemo, useRef } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import { useWalletReady } from "@/lib/wallet-ready";
-import { useDepositStore, useExpertStore, useMetaStore, useNoxDepositStore } from "@/stores";
+import {
+  useDepositStore,
+  useExpertStore,
+  useMetaStore,
+  useNoxDepositStore,
+} from "@/stores";
 import { IdleAggregatorCard } from "../idle-aggregator-card";
 import {
   formatApy,
@@ -24,9 +25,7 @@ import {
   sortVaults,
 } from "./vault-list-utils";
 import { RiskFilterChips } from "./risk-filter-chips";
-import {
-  ProtocolFilterDropdown,
-} from "./protocol-filter-dropdown";
+import { ProtocolFilterDropdown } from "./protocol-filter-dropdown";
 import {
   APY_PRESETS,
   MinThresholdDropdown,
@@ -149,8 +148,8 @@ export function VaultList() {
   const activeProtocolOption = useMemo(
     () =>
       protocolFilter
-        ? protocolOptions.find((option) => option.key === protocolFilter) ??
-          null
+        ? (protocolOptions.find((option) => option.key === protocolFilter) ??
+          null)
         : null,
     [protocolFilter, protocolOptions],
   );
@@ -303,215 +302,217 @@ export function VaultList() {
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col">
-      <AnimatePresence mode="wait">
-        {isLoading ? (
-          <SkeletonList key="skeleton" />
-        ) : hasError ? (
-          <ErrorState
-            key="error"
-            message={error ?? "Unable to reach Nox Protocol."}
-          />
-        ) : isEmpty ? (
-          <EmptyState key="empty" />
-        ) : hasData ? (
-          <motion.ul
-            key="data"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="mt-3 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-1"
-          >
-            {sorted.map((vault, index) => {
-              const isSelected = vault.id === selectedVaultId;
-              const isBest = vault.id === best?.id;
-              const protocolMeta =
-                protocolsByName[vault.protocolKey] ??
-                protocolsByName[
-                  vault.protocol.toLowerCase().replace(/\s+/g, "-")
-                ];
-              const protocolLogoUri =
-                vault.protocolLogoUri ??
-                protocolMeta?.logoUri ??
-                protocolMeta?.logoURI;
-              const chainLogo = chainsById[vault.chainId]?.logoURI;
-              const showAvg30d =
-                vault.apy30d !== null &&
-                Math.abs(vault.apy30d - vault.apy) > 0.05;
-              const timelockLabel = formatTimelock(vault.timeLock);
+        <AnimatePresence mode="wait">
+          {isLoading ? (
+            <SkeletonList key="skeleton" />
+          ) : hasError ? (
+            <ErrorState
+              key="error"
+              message={error ?? "Unable to reach Nox Protocol."}
+            />
+          ) : isEmpty ? (
+            <EmptyState key="empty" />
+          ) : hasData ? (
+            <motion.ul
+              key="data"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="mt-3 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-1"
+            >
+              {sorted.map((vault, index) => {
+                const isSelected = vault.id === selectedVaultId;
+                const isBest = vault.id === best?.id;
+                const protocolMeta =
+                  protocolsByName[vault.protocolKey] ??
+                  protocolsByName[
+                    vault.protocol.toLowerCase().replace(/\s+/g, "-")
+                  ];
+                const protocolLogoUri =
+                  vault.protocolLogoUri ??
+                  protocolMeta?.logoUri ??
+                  protocolMeta?.logoURI;
+                const chainLogo = chainsById[vault.chainId]?.logoURI;
+                const showAvg30d =
+                  vault.apy30d !== null &&
+                  Math.abs(vault.apy30d - vault.apy) > 0.05;
+                const timelockLabel = formatTimelock(vault.timeLock);
 
-              return (
-                <motion.li
-                  key={vault.id}
-                  layout
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    delay: index * 0.04,
-                    duration: 0.3,
-                    ease: "easeOut",
-                    layout: { type: "spring", stiffness: 380, damping: 32 },
-                  }}
-                >
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => selectVault(vault.id)}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault();
-                        selectVault(vault.id);
-                      }
+                return (
+                  <motion.li
+                    key={vault.id}
+                    layout
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      delay: index * 0.04,
+                      duration: 0.3,
+                      ease: "easeOut",
+                      layout: { type: "spring", stiffness: 380, damping: 32 },
                     }}
-                    className={
-                      isSelected
-                        ? "flex w-full items-center justify-between gap-4 rounded-2xl border border-strong bg-surface-raised px-4 py-3 text-left cursor-pointer transition-all duration-200 ease-in-out"
-                        : "flex w-full items-center justify-between gap-4 rounded-2xl border border-transparent bg-surface-raised px-4 py-3 text-left cursor-pointer transition-all duration-200 ease-in-out hover:border-main hover:bg-surface-muted"
-                    }
                   >
-                    <div className="flex min-w-0 items-center gap-3">
-                      <div className="relative h-10 w-10 shrink-0">
-                        <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-brand-soft text-sm font-semibold text-brand">
-                          {protocolLogoUri ? (
-                            <Image
-                              src={protocolLogoUri}
-                              alt={vault.protocol}
-                              width={40}
-                              height={40}
-                              className="h-full w-full object-contain"
-                              unoptimized
-                            />
-                          ) : (
-                            vault.protocol.charAt(0).toUpperCase()
-                          )}
-                        </span>
-                        {chainLogo ? (
-                          <span className="absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center overflow-hidden rounded-full border-2 border-(--color-surface-2) bg-(--color-surface-2)">
-                            <Image
-                              src={chainLogo}
-                              alt={vault.chainShortName}
-                              width={16}
-                              height={16}
-                              className="h-full w-full object-contain"
-                              unoptimized
-                            />
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => selectVault(vault.id)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          selectVault(vault.id);
+                        }
+                      }}
+                      className={
+                        isSelected
+                          ? "flex w-full items-center justify-between gap-4 rounded-2xl border border-strong bg-surface-raised px-4 py-3 text-left cursor-pointer transition-all duration-200 ease-in-out"
+                          : "flex w-full items-center justify-between gap-4 rounded-2xl border border-transparent bg-surface-raised px-4 py-3 text-left cursor-pointer transition-all duration-200 ease-in-out hover:border-main hover:bg-surface-muted"
+                      }
+                    >
+                      <div className="flex min-w-0 items-center gap-3">
+                        <div className="relative h-10 w-10 shrink-0">
+                          <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-brand-soft text-sm font-semibold text-brand">
+                            {protocolLogoUri ? (
+                              <Image
+                                src={protocolLogoUri}
+                                alt={vault.protocol}
+                                width={40}
+                                height={40}
+                                className="h-full w-full object-contain"
+                                unoptimized
+                              />
+                            ) : (
+                              vault.protocol.charAt(0).toUpperCase()
+                            )}
                           </span>
-                        ) : null}
-                      </div>
-                      <div className="flex min-w-0 flex-col">
-                        <div className="flex items-center gap-2">
-                          <span className="truncate text-sm font-semibold text-main">
-                            {vault.protocol}
-                          </span>
-                          {(() => {
-                            const link = resolveVaultLink(vault);
-                            if (!link) return null;
-                            return (
-                              <a
-                                href={link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label={`Open ${vault.protocol} vault details`}
-                                onClick={(event) => event.stopPropagation()}
-                                className="flex text-faint transition-colors hover:text-main"
-                              >
-                                <FiExternalLink className="h-3.5 w-3.5" />
-                              </a>
-                            );
-                          })()}
-                          {isBest ? (
-                            <span className="rounded-full bg-brand-soft px-2 py-0.5 text-[10px] font-bold tracking-wide text-brand">
-                              BEST
-                            </span>
-                          ) : null}
-                          <span className="flex h-4 items-center gap-1 rounded-full bg-[rgba(74,101,255,0.12)] px-1.5 py-0.5 text-[9px] font-semibold text-[#4a65ff]">
-                            <HiLockClosed className="h-2.5 w-2.5" />
-                            PRIVATE
-                          </span>
-                          {!vault.isTransactional ? (
-                            <span
-                              title="Not supported by Nox Protocol"
-                              className="rounded-full bg-surface-muted px-2 py-0.5 text-[10px] font-semibold text-muted"
-                            >
-                              VIEW ONLY
+                          {chainLogo ? (
+                            <span className="absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center overflow-hidden rounded-full border-2 border-(--color-surface-2) bg-(--color-surface-2)">
+                              <Image
+                                src={chainLogo}
+                                alt={vault.chainShortName}
+                                width={16}
+                                height={16}
+                                className="h-full w-full object-contain"
+                                unoptimized
+                              />
                             </span>
                           ) : null}
                         </div>
-                        <span className="line-clamp-1 text-xs text-muted">
-                          {vault.vaultName} · {vault.chainShortName}
-                        </span>
-                        <span className="inline-flex items-center gap-1 text-[9px] text-faint">
-                          <HiLockClosed className="h-2.5 w-2.5" />
-                          <span className="font-semibold">Nox Confidential</span>
-                        </span>
-                        {timelockLabel || vault.kyc ? (
-                          <div className="mt-1 flex flex-wrap items-center gap-1.5">
-                            {timelockLabel ? (
-                              <span className="inline-flex items-center gap-1 rounded-full bg-surface-muted px-1.5 py-0.5 text-[10px] font-medium text-muted">
-                                <FiClock className="h-2.5 w-2.5" />
-                                {timelockLabel}
+                        <div className="flex min-w-0 flex-col">
+                          <div className="flex items-center gap-2">
+                            <span className="truncate text-sm font-semibold text-main">
+                              {vault.protocol}
+                            </span>
+                            {(() => {
+                              const link = resolveVaultLink(vault);
+                              if (!link) return null;
+                              return (
+                                <a
+                                  href={link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  aria-label={`Open ${vault.protocol} vault details`}
+                                  onClick={(event) => event.stopPropagation()}
+                                  className="flex text-faint transition-colors hover:text-main"
+                                >
+                                  <FiExternalLink className="h-3.5 w-3.5" />
+                                </a>
+                              );
+                            })()}
+                            {isBest ? (
+                              <span className="rounded-full bg-brand-soft px-2 py-0.5 text-[10px] font-bold tracking-wide text-brand">
+                                BEST
                               </span>
                             ) : null}
-                            {vault.kyc ? (
-                              <span className="inline-flex items-center gap-1 rounded-full bg-surface-muted px-1.5 py-0.5 text-[10px] font-medium text-muted">
-                                <HiOutlineShieldCheck className="h-2.5 w-2.5" />
-                                KYC
+                            <span className="flex h-4 items-center gap-1 rounded-full bg-[rgba(74,101,255,0.12)] px-1.5 py-0.5 text-[9px] font-semibold text-[#4a65ff]">
+                              <HiLockClosed className="h-2.5 w-2.5" />
+                              PRIVATE
+                            </span>
+                            {!vault.isTransactional ? (
+                              <span
+                                title="Not supported by Nox Protocol"
+                                className="rounded-full bg-surface-muted px-2 py-0.5 text-[10px] font-semibold text-muted"
+                              >
+                                VIEW ONLY
                               </span>
                             ) : null}
                           </div>
-                        ) : null}
-                      </div>
-                    </div>
-
-                    <div className="flex shrink-0 items-center gap-5">
-                      <div className="hidden flex-col items-end sm:flex">
-                        <span className="text-[10px] uppercase tracking-wide text-faint">
-                          TVL
-                        </span>
-                        <span className="text-sm font-medium text-main">
-                          {formatTvl(vault.tvlUsd)}
-                        </span>
-                      </div>
-                      <div className="hidden flex-col items-end sm:flex">
-                        <span className="text-[10px] uppercase tracking-wide text-faint">
-                          Risk
-                        </span>
-                        <span
-                          className={`mt-0.5 rounded-full px-2 py-0.5 text-[11px] font-semibold ${RISK_CLASS[vault.risk]}`}
-                        >
-                          {RISK_LABEL[vault.risk]}
-                        </span>
-                      </div>
-                      <div className="flex flex-col items-end">
-                        <span className="text-[10px] uppercase tracking-wide text-faint">
-                          APY
-                        </span>
-                        <span className="text-base font-semibold text-[#60a5fa]">
-                          {formatApy(vault.apy)}
-                        </span>
-                        {showAvg30d && vault.apy30d !== null ? (
-                          <span className="text-[10px] text-faint">
-                            30d · {formatApy(vault.apy30d)}
+                          <span className="line-clamp-1 text-xs text-muted">
+                            {vault.vaultName} · {vault.chainShortName}
                           </span>
-                        ) : null}
+                          <span className="inline-flex items-center gap-1 text-[9px] text-faint">
+                            <HiLockClosed className="h-2.5 w-2.5" />
+                            <span className="font-semibold">
+                              Nox Confidential
+                            </span>
+                          </span>
+                          {timelockLabel || vault.kyc ? (
+                            <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                              {timelockLabel ? (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-surface-muted px-1.5 py-0.5 text-[10px] font-medium text-muted">
+                                  <FiClock className="h-2.5 w-2.5" />
+                                  {timelockLabel}
+                                </span>
+                              ) : null}
+                              {vault.kyc ? (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-surface-muted px-1.5 py-0.5 text-[10px] font-medium text-muted">
+                                  <HiOutlineShieldCheck className="h-2.5 w-2.5" />
+                                  KYC
+                                </span>
+                              ) : null}
+                            </div>
+                          ) : null}
+                        </div>
                       </div>
-                      <span
-                        className={
-                          isSelected
-                            ? "flex h-6 w-6 items-center justify-center rounded-full bg-brand text-white"
-                            : "flex h-6 w-6 items-center justify-center rounded-full border border-main bg-surface text-transparent"
-                        }
-                      >
-                        <FiCheck className="h-3.5 w-3.5" />
-                      </span>
+
+                      <div className="flex shrink-0 items-center gap-5">
+                        <div className="hidden flex-col items-end sm:flex">
+                          <span className="text-[10px] uppercase tracking-wide text-faint">
+                            TVL
+                          </span>
+                          <span className="text-sm font-medium text-main">
+                            {formatTvl(vault.tvlUsd)}
+                          </span>
+                        </div>
+                        <div className="hidden flex-col items-end sm:flex">
+                          <span className="text-[10px] uppercase tracking-wide text-faint">
+                            Risk
+                          </span>
+                          <span
+                            className={`mt-0.5 rounded-full px-2 py-0.5 text-[11px] font-semibold ${RISK_CLASS[vault.risk]}`}
+                          >
+                            {RISK_LABEL[vault.risk]}
+                          </span>
+                        </div>
+                        <div className="flex flex-col items-end">
+                          <span className="text-[10px] uppercase tracking-wide text-faint">
+                            APY
+                          </span>
+                          <span className="text-base font-semibold text-[#60a5fa]">
+                            {formatApy(vault.apy)}
+                          </span>
+                          {showAvg30d && vault.apy30d !== null ? (
+                            <span className="text-[10px] text-faint">
+                              30d · {formatApy(vault.apy30d)}
+                            </span>
+                          ) : null}
+                        </div>
+                        <span
+                          className={
+                            isSelected
+                              ? "flex h-6 w-6 items-center justify-center rounded-full bg-brand text-white"
+                              : "flex h-6 w-6 items-center justify-center rounded-full border border-main bg-surface text-transparent"
+                          }
+                        >
+                          <FiCheck className="h-3.5 w-3.5" />
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </motion.li>
-              );
-            })}
-          </motion.ul>
-        ) : null}
-      </AnimatePresence>
+                  </motion.li>
+                );
+              })}
+            </motion.ul>
+          ) : null}
+        </AnimatePresence>
       </div>
 
       <div className="mt-3 px-1 pb-1">
