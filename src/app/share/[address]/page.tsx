@@ -16,10 +16,10 @@ async function fetchPositions(address: string) {
   if (apiKey) headers["x-lifi-api-key"] = apiKey;
 
   try {
-    const res = await fetch(
-      `${LIFI_PORTFOLIO_URL}/${address}/positions`,
-      { headers, cache: "no-store" },
-    );
+    const res = await fetch(`${LIFI_PORTFOLIO_URL}/${address}/positions`, {
+      headers,
+      cache: "no-store",
+    });
     if (!res.ok) return [];
     const data = await res.json();
     return data.positions ?? [];
@@ -52,7 +52,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = `${short} is earning ${formatUsd(totalUsd)} on iEx AI`;
   const description = `${positions.length} active vault${positions.length === 1 ? "" : "s"} across DeFi. Best yield, one click.`;
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://yieldo-earn.vercel.app";
+  const baseUrl =
+    process.env.NEXT_PUBLIC_APP_URL || "https://yieldo-earn.vercel.app";
 
   return {
     title,
