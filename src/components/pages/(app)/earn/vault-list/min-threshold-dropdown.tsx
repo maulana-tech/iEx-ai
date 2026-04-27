@@ -153,9 +153,7 @@ export function MinThresholdDropdown({
               onSubmit={handleCustomSubmit}
               className="mt-1 flex items-center gap-1 rounded-xl border border-main bg-surface px-2 py-1.5"
             >
-              <span className="text-[11px] font-semibold text-faint">
-                &gt;
-              </span>
+              <span className="text-[11px] font-semibold text-faint">&gt;</span>
               <input
                 type="text"
                 value={customValue}
