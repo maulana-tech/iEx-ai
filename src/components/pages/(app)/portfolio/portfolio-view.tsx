@@ -74,9 +74,7 @@ function ConnectedPortfolio({ address }: { address: `0x${string}` }) {
   const positions = usePortfolioStore((state) => state.positions);
   const status = usePortfolioStore((state) => state.status);
   const totalValueUsd = usePortfolioStore((state) => state.totalValueUsd);
-  const totalHoldingsUsd = usePortfolioStore(
-    (state) => state.totalHoldingsUsd,
-  );
+  const totalHoldingsUsd = usePortfolioStore((state) => state.totalHoldingsUsd);
   const totalPositionsUsd = usePortfolioStore(
     (state) => state.totalPositionsUsd,
   );
@@ -116,7 +114,15 @@ function ConnectedPortfolio({ address }: { address: `0x${string}` }) {
       });
     }, 15_000);
     return () => clearTimeout(timer);
-  }, [pendingRefetch, metaStatus, address, config, chainsById, tokensByChain, loadPortfolio]);
+  }, [
+    pendingRefetch,
+    metaStatus,
+    address,
+    config,
+    chainsById,
+    tokensByChain,
+    loadPortfolio,
+  ]);
 
   const filteredHoldings = useMemo(() => {
     if (networkFilter === "all") return holdings;
