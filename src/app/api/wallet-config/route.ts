@@ -7,10 +7,7 @@ export async function GET() {
   const projectId = process.env.PROJECT_ID;
 
   if (!projectId) {
-    return NextResponse.json(
-      { error: "missing_project_id" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "missing_project_id" }, { status: 500 });
   }
 
   return NextResponse.json(
