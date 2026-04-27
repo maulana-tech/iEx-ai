@@ -120,7 +120,7 @@ async function loadChainHoldings(
         isNative: true,
       });
     }
-  } catch { }
+  } catch {}
 
   const tracked = tokens.filter((token) => {
     if (NATIVE_PLACEHOLDERS.has(token.address.toLowerCase())) return false;
@@ -166,7 +166,7 @@ async function loadChainHoldings(
         isNative: false,
       });
     });
-  } catch { }
+  } catch {}
 
   return holdings;
 }
@@ -220,9 +220,7 @@ export async function loadPortfolioSnapshot({
     }
   }
 
-  const holdings = chainResults
-    .flat()
-    .sort((a, b) => b.valueUsd - a.valueUsd);
+  const holdings = chainResults.flat().sort((a, b) => b.valueUsd - a.valueUsd);
 
   const totalHoldingsUsd = holdings.reduce(
     (sum, holding) => sum + holding.valueUsd,
@@ -316,9 +314,8 @@ async function loadTrackedVaultPositions(
           balanceUsd: (amount * priceUsd).toFixed(6),
         });
       });
-    } catch { }
+    } catch {}
   }
 
   return results;
 }
-
