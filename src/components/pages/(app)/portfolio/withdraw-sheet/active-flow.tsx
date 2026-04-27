@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  FiArrowDown,
-  FiLoader,
-} from "react-icons/fi";
+import { FiArrowDown, FiLoader } from "react-icons/fi";
 import {
   readContract,
   waitForTransactionReceipt,
