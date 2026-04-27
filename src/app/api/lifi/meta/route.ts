@@ -12,12 +12,45 @@ const EARN_CHAINS_URL = `${LIFI_EARN_API_BASE_URL}/chains`;
 const EARN_VAULTS_URL = `${LIFI_EARN_API_BASE_URL}/vaults`;
 
 const PRIORITY_SYMBOLS = new Set([
-  "ETH", "WETH", "USDC", "USDT", "DAI",
-  "USDe", "sUSDe", "USDtb", "USDS", "PYUSD", "RLUSD", "USDG", "USD1", "FDUSD",
-  "WBTC", "cbBTC", "LBTC", "tBTC", "BTCB",
-  "weETH", "wstETH", "stETH", "rETH", "rsETH", "ezETH", "cbETH", "osETH", "tETH",
-  "AAVE", "LINK", "UNI", "MKR", "CRV", "LDO",
-  "WAVAX", "sAVAX", "WBNB", "WMATIC", "WCELO",
+  "ETH",
+  "WETH",
+  "USDC",
+  "USDT",
+  "DAI",
+  "USDe",
+  "sUSDe",
+  "USDtb",
+  "USDS",
+  "PYUSD",
+  "RLUSD",
+  "USDG",
+  "USD1",
+  "FDUSD",
+  "WBTC",
+  "cbBTC",
+  "LBTC",
+  "tBTC",
+  "BTCB",
+  "weETH",
+  "wstETH",
+  "stETH",
+  "rETH",
+  "rsETH",
+  "ezETH",
+  "cbETH",
+  "osETH",
+  "tETH",
+  "AAVE",
+  "LINK",
+  "UNI",
+  "MKR",
+  "CRV",
+  "LDO",
+  "WAVAX",
+  "sAVAX",
+  "WBNB",
+  "WMATIC",
+  "WCELO",
   "slisBNB",
 ]);
 
@@ -73,10 +106,13 @@ export async function GET() {
       try {
         const earnChains = (await earnChainsRes.json()) as EarnChainEntry[];
         earnChainIds = earnChains.map((c) => c.chainId);
-      } catch { }
+      } catch {}
     }
     if (earnChainIds.length === 0) {
-      earnChainIds = [143, 1, 10, 56, 100, 130, 137, 146, 5000, 8453, 42161, 42220, 43114, 59144];
+      earnChainIds = [
+        143, 1, 10, 56, 100, 130, 137, 146, 5000, 8453, 42161, 42220, 43114,
+        59144,
+      ];
     } else if (!earnChainIds.includes(143)) {
       earnChainIds = [143, ...earnChainIds];
     }
@@ -94,7 +130,7 @@ export async function GET() {
             if (ut.symbol) set.add(ut.symbol.toUpperCase());
           }
         }
-      } catch { }
+      } catch {}
     }
 
     const tokenChainIds = earnChainIds.join(",");
@@ -104,7 +140,9 @@ export async function GET() {
     );
 
     const tokensPayload = tokensResponse.ok
-      ? ((await tokensResponse.json()) as { tokens?: Record<string, TokenEntry[]> })
+      ? ((await tokensResponse.json()) as {
+          tokens?: Record<string, TokenEntry[]>;
+        })
       : { tokens: {} };
 
     let protocols: unknown[] = [];
@@ -152,10 +190,10 @@ export async function GET() {
         const vaultSymbols = vaultTokensByChain.get(chainId);
 
         try {
-          const tokenRes = await fetch(
-            `${TOKENS_URL}?chains=${chainId}`,
-            { headers, cache: "no-store" },
-          );
+          const tokenRes = await fetch(`${TOKENS_URL}?chains=${chainId}`, {
+            headers,
+            cache: "no-store",
+          });
           if (tokenRes.ok) {
             const payload = (await tokenRes.json()) as {
               tokens?: Record<string, TokenEntry[]>;
@@ -164,12 +202,14 @@ export async function GET() {
             if (list && list.length > 0) {
               const filtered = list.filter((t) => {
                 const sym = (t.symbol ?? "").toUpperCase();
-                return PRIORITY_SYMBOLS.has(sym) || (vaultSymbols?.has(sym) ?? false);
+                return (
+                  PRIORITY_SYMBOLS.has(sym) || (vaultSymbols?.has(sym) ?? false)
+                );
               });
               if (filtered.length > 0) return { chainId, tokens: filtered };
             }
           }
-        } catch { }
+        } catch {}
 
         try {
           const res = await fetch(
@@ -211,7 +251,12 @@ export async function GET() {
 
     return NextResponse.json(
       { chains: chainsPayload.chains ?? [], tokens, protocols },
-      { headers: { "cache-control": "public, max-age=60, s-maxage=60, stale-while-revalidate=120" } },
+      {
+        headers: {
+          "cache-control":
+            "public, max-age=60, s-maxage=60, stale-while-revalidate=120",
+        },
+      },
     );
   } catch (error) {
     return NextResponse.json(
