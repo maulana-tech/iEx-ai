@@ -141,6 +141,26 @@ export const NOX_CONTRACTS = {
   NOX_COMPUTE: "0xd464B198f06756a1d00be223634b85E0a731c229",
 } as const;
 
+export const NOX_VAULTS = {
+  cUSDC_VAULT: "0x75ef70Ea33994a16751ff0b4f7DCF0F94DF1351F",
+  cRLC_VAULT: "0x1955eF9145cCAa643a8Ee61aE3206F0acb632Adf",
+} as const;
+
+export function getVaultForToken(tokenAddress: string): `0x${string}` {
+  const lower = tokenAddress.toLowerCase();
+  if (lower === NOX_CONTRACTS.cUSDC.toLowerCase())
+    return NOX_VAULTS.cUSDC_VAULT;
+  if (lower === NOX_CONTRACTS.cRLC.toLowerCase()) return NOX_VAULTS.cRLC_VAULT;
+  return "0x0000000000000000000000000000000000000000";
+}
+
+export function getUnderlyingForToken(tokenAddress: string): `0x${string}` {
+  const lower = tokenAddress.toLowerCase();
+  if (lower === NOX_CONTRACTS.cUSDC.toLowerCase()) return NOX_CONTRACTS.USDC;
+  if (lower === NOX_CONTRACTS.cRLC.toLowerCase()) return NOX_CONTRACTS.RLC;
+  return "0x0000000000000000000000000000000000000000";
+}
+
 export const CONFIDENTIAL_TOKENS: Record<number, NoxToken[]> = {
   421614: [
     {
