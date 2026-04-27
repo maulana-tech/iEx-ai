@@ -104,9 +104,7 @@ function applyPercentage(
 ): string {
   try {
     const raw = balanceNative || "0";
-    const balance = raw.includes(".")
-      ? toBigInt(raw, decimals)
-      : BigInt(raw);
+    const balance = raw.includes(".") ? toBigInt(raw, decimals) : BigInt(raw);
     if (balance === 0n) return "0";
     const pct = BigInt(Math.max(1, Math.min(100, percentage)));
     return ((balance * pct) / 100n).toString();
@@ -242,8 +240,7 @@ export const useWithdrawStore = create<WithdrawState>((set, get) => ({
       });
 
       const slippageBps = 50n;
-      const minAssets =
-        (previewedAssets * (10_000n - slippageBps)) / 10_000n;
+      const minAssets = (previewedAssets * (10_000n - slippageBps)) / 10_000n;
 
       const quote: LifiQuoteResponse = {
         id: "local-redeem",
