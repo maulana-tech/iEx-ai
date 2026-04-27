@@ -20,7 +20,11 @@ export const RISK_CLASS: Record<VaultRisk, string> = {
   high: "bg-[rgba(250,43,57,0.12)] text-(--color-negative)",
 };
 
-export const PREVIEW_PERIODS: { key: string; label: string; divisor: number }[] = [
+export const PREVIEW_PERIODS: {
+  key: string;
+  label: string;
+  divisor: number;
+}[] = [
   { key: "year", label: "1Y", divisor: 1 },
   { key: "month", label: "1M", divisor: 12 },
   { key: "week", label: "1W", divisor: 52 },
