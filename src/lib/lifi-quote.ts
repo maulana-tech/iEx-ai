@@ -5,8 +5,18 @@ export type LifiQuoteResponse = {
   action: {
     fromChainId: number;
     toChainId: number;
-    fromToken: { address: string; symbol: string; decimals: number; chainId: number };
-    toToken: { address: string; symbol: string; decimals: number; chainId: number };
+    fromToken: {
+      address: string;
+      symbol: string;
+      decimals: number;
+      chainId: number;
+    };
+    toToken: {
+      address: string;
+      symbol: string;
+      decimals: number;
+      chainId: number;
+    };
     fromAmount: string;
     slippage: number;
     fromAddress: string;
