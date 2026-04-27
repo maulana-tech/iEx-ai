@@ -6,41 +6,67 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ## Project
 
-- **Root is the Next.js app** — no `frontend/` subdirectory. `package.json` lives at `/`.
-- **Path alias**: `@/*` maps to `./src/*` (not `./frontend/src/*`).
-- `pnpm-workspace.yaml` does not define workspace packages — it's only used for built dependency config.
+- Root is the Next.js app. `package.json` lives at `/`.
+- Path alias `@/*` maps to `./src/*`.
+- `pnpm-workspace.yaml` only controls built dependencies — no workspace packages.
 
-## Setup & Dev
+## Setup
 
 ```bash
 cp .env.example .env.local
 pnpm install
 pnpm dev
 ```
-Required env vars: `PROJECT_ID` (WalletConnect), `NEXT_PUBLIC_APP_URL`, `IEXEC_NOX_API_KEY`, `IEXEC_NOX_SECRET_KEY`.
+
+Required env vars: `PROJECT_ID` (WalletConnect), `NEXT_PUBLIC_APP_URL`, `CHAINGPT_API_KEY` (optional — contact @vladnazarxyz for free credits).
 
 ## Lint & Format
 
-- **Biome** (not ESLint/Prettier)
-- `pnpm lint` — check only (no auto-fix)
-- `pnpm format` — write changes
-- Config: `biome.json` (Next.js + React domain rules enabled)
+**Biome** (not ESLint/Prettier). No `pnpm typecheck` script exists.
+
+```bash
+pnpm lint   # check only
+pnpm format # write changes
+```
 
 ## Tech Stack
 
 - Next.js 16 (App Router, Turbopack)
-- React 19 + React Compiler (`babel-plugin-react-compiler`)
+- React 19 + React Compiler (`babel-plugin-react-compiler`, enabled in `next.config.ts`)
 - Tailwind CSS 4 + PostCSS
 - wagmi v2, viem, RainbowKit
 - Zustand for state
-- **Nox Protocol** (iExec confidential computing) + **ChainGPT** (AI)
+- **Two protocols coexist**: Nox Protocol (confidential vaults) + LI.FI (general earn/portfolio)
 
 ## Key Architecture
 
-- **No longer uses LI.FI** — migrated to Nox Protocol
-- Nox proxies at `src/app/api/nox/{vaults,quote,meta,portfolio}/`
-- Nox lib files: `src/lib/nox-vault.ts`, `src/lib/nox-meta.ts`, `src/lib/nox-quote.ts`, `src/lib/nox-handle.ts`
-- Confidential stores: `src/stores/nox-deposit-store.ts`, `src/stores/nox-withdraw-store.ts`
-- App pages under `src/app/(app)/`
-- Default chain: **Arbitrum Sepolia (421614)** — NOT Monad
-- Confidential tokens: cUSDC, cUSDT, cWETH (ERC-7984)
+### API Proxies (two parallel systems)
+
+| Pattern | Purpose | Proxied upstream |
+|---|---|---|
+| `src/app/api/nox/{vaults,quote,meta,portfolio}/` | Confidential vault aggregator | Nox Protocol |
+| `src/app/api/earn/{vaults,quote,portfolio}/` | General earn | LI.FI (`earn.li.fi/v1`) |
+| `src/app/api/lifi/meta/` | Chain/token metadata | LI.FI |
+
+### Nox Protocol (confidential)
+
+- Libs: `src/lib/nox-{vault,meta,quote,handle}.ts`
+- Stores: `src/stores/nox-{deposit,withdraw}-store.ts`
+- Confidential tokens: cUSDC, cRLC (ERC-7984) on Arbitrum Sepolia (421614)
+- Contract addresses in `src/lib/nox-types.ts` → `NOX_CONTRACTS`
+- Handle client: `createNoxHandleClientFromWagmi()` / `createNoxHandleClientFromWindow()` from `@/lib/nox-handle`
+
+### LI.FI (general earn, still active)
+
+- Libs: `src/lib/lifi-{earn,meta,quote,portfolio}.ts`
+- Stores: `src/stores/deposit-store.ts`, `src/stores/withdraw-store.ts`, `src/stores/portfolio-store.ts`
+- Env var: `LIFI_API_KEY` (optional, passed as `x-lifi-api-key` header)
+
+### Portfolio
+
+- `src/lib/portfolio-fetcher.ts` merges LI.FI positions + tracked vault positions (from `src/lib/tracked-vaults.ts`)
+
+### Pages
+
+- All app pages under `src/app/(app)/` (compare/, earn/, portfolio/)
+- Default chain: **Arbitrum Sepolia (421614)**
