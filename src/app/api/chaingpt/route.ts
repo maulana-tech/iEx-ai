@@ -2,14 +2,11 @@ import { NextResponse } from "next/server";
 import { chatWithChainGPT } from "@/lib/chaingpt";
 
 export async function POST(request: Request) {
-  const body = await request.json() as { prompt?: string };
+  const body = (await request.json()) as { prompt?: string };
   const prompt = body.prompt;
 
   if (!prompt) {
-    return NextResponse.json(
-      { error: "Missing prompt" },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "Missing prompt" }, { status: 400 });
   }
 
   try {
