@@ -1,15 +1,21 @@
-import { writeContract, waitForTransactionReceipt } from "@wagmi/core";
+import {
+  readContract,
+  waitForTransactionReceipt,
+  writeContract,
+} from "@wagmi/core";
 import type { Config } from "wagmi";
 import { create } from "zustand";
-import type { NoxPortfolio } from "@/lib/nox-types";
 import {
   createNoxHandleClientFromWindow,
   encryptAmountWithHandle,
 } from "@/lib/nox-handle";
+import type { NoxPortfolio } from "@/lib/nox-types";
+import { NOX_YIELD_VAULT_ABI } from "@/lib/nox-vault-contract";
 
 export type WithdrawStep =
   | "idle"
   | "ready"
+  | "redeeming"
   | "unwrapping"
   | "success"
   | "error";
@@ -30,9 +36,7 @@ const ERC7984_UNWRAPPER_ABI = [
     name: "finalizeUnwrap",
     type: "function",
     stateMutability: "nonpayable",
-    inputs: [
-      { name: "handle", type: "bytes32" },
-    ],
+    inputs: [{ name: "handle", type: "bytes32" }],
     outputs: [],
   },
 ] as const;
@@ -94,41 +98,81 @@ export const useNoxWithdrawStore = create<WithdrawState>((set, get) => ({
       return;
     }
 
-    set({ step: "unwrapping", error: null });
+    const vaultAddress = position.vaultAddress as `0x${string}`;
+    const cTokenAddress = position.token.address as `0x${string}`;
+    const isZeroVault =
+      vaultAddress === "0x0000000000000000000000000000000000000000";
+
+    if (isZeroVault) {
+      set({ step: "error", error: "Vault contract not deployed yet." });
+      return;
+    }
 
     try {
       const shares = applyPercentage(position.balance, percentage);
       if (shares === "0") throw new Error("Nothing to withdraw.");
 
+      set({ step: "redeeming", error: null });
+
+      const sharesBigInt = BigInt(shares);
+      const previewAssets = (await readContract(config, {
+        address: vaultAddress,
+        abi: NOX_YIELD_VAULT_ABI,
+        functionName: "previewRedeem",
+        args: [sharesBigInt],
+        chainId: position.chainId,
+      })) as bigint;
+
+      const redeemHash = await writeContract(config, {
+        address: vaultAddress,
+        abi: NOX_YIELD_VAULT_ABI,
+        functionName: "redeem",
+        args: [sharesBigInt, account, account],
+        chainId: position.chainId,
+      });
+      await waitForTransactionReceipt(config, {
+        hash: redeemHash,
+        chainId: position.chainId,
+      });
+
+      set({ step: "unwrapping" });
+
       const handleClient = await createNoxHandleClientFromWindow(account);
       const { handle, handleProof } = await encryptAmountWithHandle(
         handleClient,
-        BigInt(shares),
+        previewAssets,
         "uint256",
-        position.vaultAddress as `0x${string}`,
+        cTokenAddress,
       );
 
       const unwrapHash = await writeContract(config, {
-        address: position.vaultAddress as `0x${string}`,
+        address: cTokenAddress,
         abi: ERC7984_UNWRAPPER_ABI,
         functionName: "unwrap",
-        args: [BigInt(shares), handle as `0x${string}`, handleProof as `0x${string}`],
+        args: [
+          previewAssets,
+          handle as `0x${string}`,
+          handleProof as `0x${string}`,
+        ],
         chainId: position.chainId,
       });
-      await waitForTransactionReceipt(config, { hash: unwrapHash, chainId: position.chainId });
-
-      const finalizeHash = await writeContract(config, {
-        address: position.vaultAddress as `0x${string}`,
-        abi: ERC7984_UNWRAPPER_ABI,
-        functionName: "finalizeUnwrap",
-        args: [handle as `0x${string}`],
+      await waitForTransactionReceipt(config, {
+        hash: unwrapHash,
         chainId: position.chainId,
       });
 
-      set({ txHash: finalizeHash, step: "success" });
+      set({ txHash: unwrapHash, step: "success" });
     } catch (error) {
       const raw = (error as Error).message || "Withdrawal failed";
-      set({ step: "error", error: raw.length > 160 ? `${raw.slice(0, 160)}…` : raw });
+      const lower = raw.toLowerCase();
+      let msg = raw;
+      if (lower.includes("user rejected"))
+        msg = "Transaction rejected in wallet.";
+      else if (lower.includes("insufficient")) msg = "Insufficient balance.";
+      set({
+        step: "error",
+        error: msg.length > 160 ? `${msg.slice(0, 160)}…` : msg,
+      });
     }
   },
 
