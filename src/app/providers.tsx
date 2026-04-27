@@ -56,7 +56,7 @@ function WagmiAndWalletProviders({ children }: ProvidersProps) {
         if (!data?.projectId) return;
         setConfig(createWagmiConfig(data.projectId));
       })
-      .catch(() => { });
+      .catch(() => {});
 
     return () => controller.abort();
   }, []);
