@@ -178,7 +178,7 @@ export const CONFIDENTIAL_TOKENS: Record<number, NoxToken[]> = {
       symbol: "cRLC",
       name: "Confidential RLC",
       decimals: 9,
-      logoURI: "https://assets.coingecko.com/coins/images/0/small/rlc.png",
+      logoURI: "/Assets/Images/Logo-Coin/rlc-logo.svg",
       priceUSD: "3.5",
       isConfidential: true,
     },
