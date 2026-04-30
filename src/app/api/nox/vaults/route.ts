@@ -59,7 +59,7 @@ export async function GET(request: Request) {
       underlyingSymbol: "RLC",
       underlyingPrice: "3.5",
       underlyingLogo:
-        "https://assets.coingecko.com/coins/images/0/small/rlc.png",
+        "/Assets/Images/Logo-Coin/rlc-logo.svg",
       underlyingDecimals: 9,
       defaultApy: 4.0,
       riskTier: "medium",
