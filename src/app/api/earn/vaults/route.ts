@@ -19,11 +19,6 @@ const PASS_THROUGH_PARAMS = [
 
 export async function GET(request: NextRequest) {
   const apiKey = process.env.LIFI_API_KEY;
-
-  if (!apiKey) {
-    return NextResponse.json({ error: "missing_api_key" }, { status: 500 });
-  }
-
   const incoming = request.nextUrl.searchParams;
   const upstream = new URL(LIFI_EARN_VAULTS_URL);
 
@@ -39,11 +34,11 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    const headers: Record<string, string> = { accept: "application/json" };
+    if (apiKey) headers["x-lifi-api-key"] = apiKey;
+
     const upstreamResponse = await fetch(upstream.toString(), {
-      headers: {
-        accept: "application/json",
-        "x-lifi-api-key": apiKey,
-      },
+      headers,
       cache: "no-store",
     });
 

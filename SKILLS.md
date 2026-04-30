@@ -24,21 +24,12 @@ Think: **yield aggregator meets confidential computing — Arbitrum-first.**
 | RLC | `0x9923eD3cbd90CD78b910c475f9A731A6e0b8C963` | ERC-20 |
 | **cRLC** | `0x92b23f4a59175415ced5cb37e64a1fc6a9d79af4` | ERC-7984 |
 
-### Yield Vaults (ERC-4626) — TODO: Deploy
+### Yield Vaults (ERC-4626)
 
-| Vault | Asset | Contract |
-|-------|-------|----------|
-| NoxYieldVault cUSDC | cUSDC | `contracts/NoxYieldVault.sol` |
-| NoxYieldVault cRLC | cRLC | `contracts/NoxYieldVault.sol` |
-
-**Deploy steps:**
-1. Open Remix (remix.ethereum.org) or use Foundry
-2. Deploy `NoxYieldVault` with:
-   - `asset_` = cUSDC address
-   - `name_` = "Nox cUSDC Vault"
-   - `symbol_` = "nvUSDC"
-3. Repeat for cRLC
-4. Update `NOX_VAULTS` in `src/lib/nox-types.ts` with deployed addresses
+| Vault | Asset | Address |
+|-------|-------|---------|
+| Nox cUSDC Vault | cUSDC | `0x75ef70Ea33994a16751ff0b4f7DCF0F94DF1351F` |
+| Nox cRLC Vault | cRLC | `0x1955eF9145cCAa643a8Ee61aE3206F0acb632Adf` |
 
 ## Flows
 
@@ -92,6 +83,6 @@ Buka http://localhost:3000/earn
 - [x] End-to-end functionality (no mock data in code)
 - [x] cUSDC, cRLC confidential tokens (ERC-7984)
 - [x] ERC-4626 yield vault contract
-- [ ] **Deploy vault contracts** → update `NOX_VAULTS` addresses
+- [x] Deploy vault contracts → `NOX_VAULTS` addresses updated
 - [ ] **X Post** — demo video + repo link + tag @iExecDev @Chain_GPT
 - [ ] **feedback.md** — iExec tools feedback
