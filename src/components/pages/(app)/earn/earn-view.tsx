@@ -9,8 +9,11 @@ import { StrategyReview } from "./strategy-review";
 import { SupplyCard } from "./supply-card";
 import { VaultList } from "./vault-list";
 
-const DepositSheet = dynamic(
-  () => import("./deposit-sheet").then((m) => m.DepositSheet),
+const NoxDepositSheet = dynamic(
+  () =>
+    import("./nox-deposit-sheet/nox-deposit-sheet").then(
+      (m) => m.NoxDepositSheet,
+    ),
   { ssr: false },
 );
 
@@ -33,7 +36,7 @@ export function EarnView() {
           </div>
         </div>
       </main>
-      <DepositSheet />
+      <NoxDepositSheet />
     </>
   );
 }
