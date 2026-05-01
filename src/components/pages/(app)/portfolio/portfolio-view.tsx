@@ -102,7 +102,17 @@ function ConnectedPortfolio({ address }: { address: `0x${string}` }) {
     chainsById,
     tokensByChain,
     loadPortfolio,
-  ]);
+]);
+
+  useEffect(() => {
+    if (networkFilter === "all") return;
+    if (metaStatus !== "ready" || !address) return;
+    loadPortfolio({
+      config,
+      address,
+      meta: { chainsById, tokensByChain },
+    });
+  }, [networkFilter, config, address, chainsById, tokensByChain, loadPortfolio, metaStatus]);
 
   useEffect(() => {
     if (!pendingRefetch || metaStatus !== "ready" || !address) return;

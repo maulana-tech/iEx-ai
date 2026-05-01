@@ -44,7 +44,7 @@ export const usePortfolioStore = create<PortfolioState>((set) => ({
   status: "idle",
   error: null,
   lastFetchedAddress: null,
-  networkFilter: 143,
+  networkFilter: "all",
   pendingRefetch: false,
   setNetworkFilter: (networkFilter) => set({ networkFilter }),
   markForRefetch: () => set({ pendingRefetch: true, lastFetchedAddress: null }),
