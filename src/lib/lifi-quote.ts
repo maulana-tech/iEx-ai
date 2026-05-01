@@ -56,7 +56,7 @@ export async function fetchQuoteViaProxy(
   signal?: AbortSignal,
 ): Promise<LifiQuoteResponse> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
-  const url = new URL("/api/nox/quote", baseUrl);
+  const url = new URL("/api/earn/quote", baseUrl);
   for (const [key, value] of Object.entries(params)) {
     if (value === undefined || value === null) continue;
     url.searchParams.set(key, String(value));
