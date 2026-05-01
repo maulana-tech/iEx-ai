@@ -100,102 +100,102 @@ export function PositionsSection({
                 return (
                   <motion.li
                     key={`${position.chainId}-${position.protocolName}-${position.asset.address}-${index}`}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.04, duration: 0.25 }}
-                >
-                  <div className="flex w-full items-center justify-between gap-4 rounded-2xl bg-surface-raised px-4 py-4">
-                    <div className="flex min-w-0 items-center gap-3">
-                      <div className="relative h-10 w-10 shrink-0">
-                        <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-brand-soft text-sm font-semibold text-brand">
-                          {resolved.logoPath ? (
-                            <Image
-                              src={resolved.logoPath}
-                              alt={resolved.displayName}
-                              width={40}
-                              height={40}
-                              className="h-full w-full object-contain"
-                            />
-                          ) : (
-                            resolved.displayName.charAt(0).toUpperCase()
-                          )}
-                        </span>
-                        {chain?.logoURI ? (
-                          <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center overflow-hidden rounded-full border-2 border-(--color-surface-2) bg-(--color-surface-2)">
-                            <Image
-                              src={chain.logoURI}
-                              alt={chain.name}
-                              width={12}
-                              height={12}
-                              className="h-full w-full object-contain"
-                              unoptimized
-                            />
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.04, duration: 0.25 }}
+                  >
+                    <div className="flex w-full items-center justify-between gap-4 rounded-2xl bg-surface-raised px-4 py-4">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <div className="relative h-10 w-10 shrink-0">
+                          <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-brand-soft text-sm font-semibold text-brand">
+                            {resolved.logoPath ? (
+                              <Image
+                                src={resolved.logoPath}
+                                alt={resolved.displayName}
+                                width={40}
+                                height={40}
+                                className="h-full w-full object-contain"
+                              />
+                            ) : (
+                              resolved.displayName.charAt(0).toUpperCase()
+                            )}
                           </span>
-                        ) : null}
-                      </div>
-                      <div className="flex min-w-0 flex-col">
-                        <span className="flex items-center gap-1.5">
-                          <span className="truncate text-sm font-semibold text-main">
-                            {resolved.displayName}
-                          </span>
-                          {(() => {
-                            const url =
-                              resolvePositionUrl(
-                                position.protocolName,
-                                position.chainId,
-                                position.asset.address,
-                              ) ??
-                              resolveExplorerUrl(
-                                position.chainId,
-                                position.asset.address,
+                          {chain?.logoURI ? (
+                            <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center overflow-hidden rounded-full border-2 border-(--color-surface-2) bg-(--color-surface-2)">
+                              <Image
+                                src={chain.logoURI}
+                                alt={chain.name}
+                                width={12}
+                                height={12}
+                                className="h-full w-full object-contain"
+                                unoptimized
+                              />
+                            </span>
+                          ) : null}
+                        </div>
+                        <div className="flex min-w-0 flex-col">
+                          <span className="flex items-center gap-1.5">
+                            <span className="truncate text-sm font-semibold text-main">
+                              {resolved.displayName}
+                            </span>
+                            {(() => {
+                              const url =
+                                resolvePositionUrl(
+                                  position.protocolName,
+                                  position.chainId,
+                                  position.asset.address,
+                                ) ??
+                                resolveExplorerUrl(
+                                  position.chainId,
+                                  position.asset.address,
+                                );
+                              if (!url) return null;
+                              return (
+                                <a
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  aria-label={`Open ${resolved.displayName} position`}
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="flex text-faint transition-colors hover:text-main"
+                                >
+                                  <FiExternalLink className="h-3 w-3" />
+                                </a>
                               );
-                            if (!url) return null;
-                            return (
-                              <a
-                                href={url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label={`Open ${resolved.displayName} position`}
-                                onClick={(e) => e.stopPropagation()}
-                                className="flex text-faint transition-colors hover:text-main"
-                              >
-                                <FiExternalLink className="h-3 w-3" />
-                              </a>
-                            );
-                          })()}
-                        </span>
-                        <span className="truncate text-[11px] text-muted">
-                          {position.asset.symbol} ·{" "}
-                          {chain?.name ?? `Chain ${position.chainId}`}
-                        </span>
+                            })()}
+                          </span>
+                          <span className="truncate text-[11px] text-muted">
+                            {position.asset.symbol} ·{" "}
+                            {chain?.name ?? `Chain ${position.chainId}`}
+                          </span>
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="flex items-center gap-3">
-                      <div className="flex flex-col items-end">
-                        <span className="text-sm font-semibold text-main">
-                          {formatUsd(usd)}
-                        </span>
-                        <span className="text-[11px] text-muted">
-                          {formatBalance(
-                            position.balanceNative,
-                            position.asset.decimals,
-                            position.asset.symbol,
-                          )}
-                        </span>
+                      <div className="flex items-center gap-3">
+                        <div className="flex flex-col items-end">
+                          <span className="text-sm font-semibold text-main">
+                            {formatUsd(usd)}
+                          </span>
+                          <span className="text-[11px] text-muted">
+                            {formatBalance(
+                              position.balanceNative,
+                              position.asset.decimals,
+                              position.asset.symbol,
+                            )}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => openWithdrawSheet(position)}
+                          className="flex h-7 items-center gap-1 rounded-full bg-brand px-3 text-[10px] font-semibold text-white cursor-pointer transition-colors hover:bg-brand-hover"
+                        >
+                          Withdraw
+                          <FiArrowUpRight className="h-3 w-3" />
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => openWithdrawSheet(position)}
-                        className="flex h-7 items-center gap-1 rounded-full bg-brand px-3 text-[10px] font-semibold text-white cursor-pointer transition-colors hover:bg-brand-hover"
-                      >
-                        Withdraw
-                        <FiArrowUpRight className="h-3 w-3" />
-                      </button>
                     </div>
-                  </div>
-                </motion.li>
-);
+                  </motion.li>
+                );
               })}
           </motion.ul>
         )}
