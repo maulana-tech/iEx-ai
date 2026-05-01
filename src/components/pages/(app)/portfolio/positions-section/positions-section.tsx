@@ -17,7 +17,7 @@ import {
 } from "./positions-section-utils";
 
 type PositionsSectionProps = {
-  positions: LifiPortfolioPosition[];
+  positions?: LifiPortfolioPosition[];
   status: "idle" | "loading" | "ready" | "error";
   networkFilter: number | "all";
   chainsById: Record<number, LifiChainMeta>;
@@ -91,12 +91,12 @@ export function PositionsSection({
             exit={{ opacity: 0 }}
             className="mt-4 flex flex-col gap-2"
           >
-            {positions && positions.length > 0 ? (
-              positions.map((position, index) => {
+            {positions
+              ?.filter((p) => p.asset?.address)
+              .map((position, index) => {
                 const chain = chainsById[position.chainId];
                 const usd = Number.parseFloat(position.balanceUsd ?? "0");
                 const resolved = resolveProtocol(position.protocolName);
-                if (!position.asset?.address) return null;
                 return (
                   <motion.li
                     key={`${position.chainId}-${position.protocolName}-${position.asset.address}-${index}`}
@@ -195,9 +195,8 @@ export function PositionsSection({
                     </div>
                   </div>
                 </motion.li>
-              );
-            })}
-            {positions && positions.length > 0 ? null : (isEmpty ? null : positions?.length === 0 ? null : <></>)}
+);
+              })}
           </motion.ul>
         )}
       </AnimatePresence>
