@@ -252,9 +252,10 @@ export function HeroSection() {
             >
               <FiPlus className="mt-0.5 size-4 shrink-0 text-faint" />
               <p className="max-w-sm text-sm leading-relaxed text-muted">
-                iEx AI wraps your deposits into TEE-encrypted confidential
-                tokens (ERC-7984), deposits them into ERC-4626 yield vaults, and
-                keeps your balances hidden from the public chain.
+                Confidential yield farming powered by iExec Nox & TEE compute.
+                Secure your assets with ERC-7984 tokens and find the best routes
+                with ChainGPT-assisted AI routing — keeping your balances hidden
+                on-chain.
               </p>
             </motion.div>
 
