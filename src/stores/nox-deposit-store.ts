@@ -1,5 +1,5 @@
-import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
-import { erc20Abi, parseUnits } from "viem";
+import { getPublicClient, waitForTransactionReceipt, writeContract } from "@wagmi/core";
+import { erc20Abi, parseGwei, parseUnits } from "viem";
 import type { Config } from "wagmi";
 import { create } from "zustand";
 import { getUnderlyingForToken, getVaultForToken } from "@/lib/nox-types";
@@ -63,6 +63,21 @@ type DepositState = {
   setTxHash: (txHash: string | null) => void;
   executeDeposit: (config: Config, account: `0x${string}`) => Promise<void>;
 };
+
+async function getGasParams(config: Config, chainId: number) {
+  let maxFeePerGas = parseGwei("0.5");
+  let maxPriorityFeePerGas = parseGwei("0.001");
+  try {
+    const client = getPublicClient(config, { chainId });
+    const fees = await client?.estimateFeesPerGas();
+    if (fees?.maxFeePerGas) {
+      maxFeePerGas = fees.maxFeePerGas * 2n;
+      maxPriorityFeePerGas =
+        fees.maxPriorityFeePerGas ?? parseGwei("0.001");
+    }
+  } catch {}
+  return { maxFeePerGas, maxPriorityFeePerGas };
+}
 
 function friendlyError(raw: string): string {
   const lower = raw.toLowerCase();
@@ -172,16 +187,21 @@ export const useNoxDepositStore = create<DepositState>((set, get) => ({
         return;
       }
 
+      const targetChainId = vault.chainId;
+      const gasParams = await getGasParams(config, targetChainId);
+
       const approveHash = await writeContract(config, {
         address: underlyingAddress,
         abi: erc20Abi,
         functionName: "approve",
         args: [cTokenAddress, amountBigInt],
-        chainId: chain.id,
+        chainId: targetChainId,
+        gas: 100_000n,
+        ...gasParams,
       });
       await waitForTransactionReceipt(config, {
         hash: approveHash,
-        chainId: chain.id,
+        chainId: targetChainId,
       });
 
       set({ step: "wrapping" });
@@ -190,11 +210,13 @@ export const useNoxDepositStore = create<DepositState>((set, get) => ({
         abi: ERC7984_WRAPPER_ABI,
         functionName: "wrap",
         args: [account, amountBigInt],
-        chainId: chain.id,
+        chainId: targetChainId,
+        gas: 300_000n,
+        ...gasParams,
       });
       await waitForTransactionReceipt(config, {
         hash: wrapHash,
-        chainId: chain.id,
+        chainId: targetChainId,
       });
 
       set({ step: "depositing" });
@@ -203,11 +225,13 @@ export const useNoxDepositStore = create<DepositState>((set, get) => ({
         abi: erc20Abi,
         functionName: "approve",
         args: [yieldVaultAddress, amountBigInt],
-        chainId: chain.id,
+        chainId: targetChainId,
+        gas: 200_000n,
+        ...gasParams,
       });
       await waitForTransactionReceipt(config, {
         hash: approveVaultHash,
-        chainId: chain.id,
+        chainId: targetChainId,
       });
 
       const depositHash = await writeContract(config, {
@@ -215,11 +239,13 @@ export const useNoxDepositStore = create<DepositState>((set, get) => ({
         abi: NOX_YIELD_VAULT_ABI,
         functionName: "deposit",
         args: [amountBigInt, account],
-        chainId: chain.id,
+        chainId: targetChainId,
+        gas: 300_000n,
+        ...gasParams,
       });
       await waitForTransactionReceipt(config, {
         hash: depositHash,
-        chainId: chain.id,
+        chainId: targetChainId,
       });
 
       set({ txHash: depositHash, step: "success" });
