@@ -17,7 +17,7 @@ type TokensSectionProps = {
   networkFilter: number | "all";
 };
 
-export function TokensSection({ holdings, status }: TokensSectionProps) {
+export function TokensSection({ holdings = [], status }: TokensSectionProps) {
   const isLoading = status === "loading" || status === "idle";
   const isEmpty = status === "ready" && holdings.length === 0;
 

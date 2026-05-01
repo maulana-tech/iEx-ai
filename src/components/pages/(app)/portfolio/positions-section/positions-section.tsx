@@ -24,7 +24,7 @@ type PositionsSectionProps = {
 };
 
 export function PositionsSection({
-  positions,
+  positions = [],
   status,
   chainsById,
 }: PositionsSectionProps) {
@@ -91,13 +91,15 @@ export function PositionsSection({
             exit={{ opacity: 0 }}
             className="mt-4 flex flex-col gap-2"
           >
-            {positions.map((position, index) => {
-              const chain = chainsById[position.chainId];
-              const usd = Number.parseFloat(position.balanceUsd ?? "0");
-              const resolved = resolveProtocol(position.protocolName);
-              return (
-                <motion.li
-                  key={`${position.chainId}-${position.protocolName}-${position.asset.address}-${index}`}
+            {positions && positions.length > 0 ? (
+              positions.map((position, index) => {
+                const chain = chainsById[position.chainId];
+                const usd = Number.parseFloat(position.balanceUsd ?? "0");
+                const resolved = resolveProtocol(position.protocolName);
+                if (!position.asset?.address) return null;
+                return (
+                  <motion.li
+                    key={`${position.chainId}-${position.protocolName}-${position.asset.address}-${index}`}
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.04, duration: 0.25 }}
@@ -195,6 +197,7 @@ export function PositionsSection({
                 </motion.li>
               );
             })}
+            {positions && positions.length > 0 ? null : (isEmpty ? null : positions?.length === 0 ? null : <></>)}
           </motion.ul>
         )}
       </AnimatePresence>
