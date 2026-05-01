@@ -11,7 +11,7 @@
 [![Deployed on](https://img.shields.io/badge/Deployed%20on-Arbitrum%20Sepolia-28A0F0?style=for-the-badge)](https://sepolia.arbiscan.io/address/0xbD124A4C743847f5862024906B66ABeDeB9cCB6e)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
-[Try the dApp ↗](https://iex-ai.vercel.app/) · [Demo Video (4 min)](#) · [Arbiscan — Vault Factory](#)
+[Try the dApp ↗](https://iex-ai.vercel.app/) · [Demo Video (2 min)](https://canva.link/7p7v7cse45n4ecs) · [Arbiscan — Vault Factory](#)
 
 </div>
 
@@ -491,7 +491,7 @@ pnpm dev
 | **ChainGPT vault routing assistant** | ✅ Live | Floating AI button on all pages |
 | Vercel contract verification | ✅ All contracts verified | Via Etherscan API V2 |
 | Live demo URL (Vercel) | ✅ Live | [iex-ai.vercel.app](https://iex-ai.vercel.app) |
-| Demo video ≤ 4 min | ⏳ Pending | Script outline ready |
+| Demo video ≤ 4 min | ✅ Live| [demo video](https://canva.link/7p7v7cse45n4ecs) |
 
 ---
 
