@@ -119,7 +119,9 @@ export function AIChatSheet() {
                   <FiMessageCircle className="h-4.5 w-4.5 text-brand" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-main">AI Assistant</p>
+                  <p className="text-sm font-semibold text-main">
+                    AI Assistant
+                  </p>
                   <p className="text-xs text-faint">Powered by ChainGPT</p>
                 </div>
               </div>
