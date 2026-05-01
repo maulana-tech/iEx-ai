@@ -239,9 +239,9 @@ export function HeroSection() {
               <br />
               Farming.
               <br />
-              <span className="text-muted">Powered by</span> TEE
+              <span className="text-muted">Powered by</span> Nox
               <br />
-              Encryption.
+              Protocol.
             </motion.h1>
 
             <motion.div
