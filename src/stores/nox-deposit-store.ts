@@ -127,9 +127,18 @@ export const useNoxDepositStore = create<DepositState>((set, get) => ({
       set({ step: "error", error: "Missing deposit context" });
       return;
     }
+
     const trimmed = amount.trim();
     if (!trimmed || Number.parseFloat(trimmed) <= 0) {
       set({ step: "error", error: "Enter an amount to continue" });
+      return;
+    }
+
+    if (chain.id !== vault.chainId) {
+      set({
+        step: "error",
+        error: `Please switch to Arbitrum Sepolia (421614) to deposit. These vaults are only on testnet.`,
+      });
       return;
     }
     set({ step: "ready", error: null });
