@@ -4,16 +4,14 @@
 
 # iEx AI — Confidential Yield Vault Aggregator
 
-*Confidential yield farming powered by iExec Nox & ERC-7984 Confidential Tokens, with AI-assisted vault routing from ChainGPT.*
+*Confidential yield farming powered by iExec Nox & ERC-7984 Confidential Tokens, with AI-assisted vault routing.*
 
 [![Live App](https://img.shields.io/badge/Live%20App-iex--ai.vercel.app-10B981?style=for-the-badge&logo=vercel&logoColor=white)](https://iex-ai.vercel.app)
-[![Docs](https://img.shields.io/badge/Docs-docs--iex--ai.vercel.app-0a0a0a?style=for-the-badge&logo=readthedocs&logoColor=white)](https://docs-iex-ai.vercel.app)
 [![Built on Nox](https://img.shields.io/badge/Built%20on-iExec%20Nox-FFD800?style=for-the-badge)](https://docs.iex.ec/nox-protocol/getting-started/welcome)
-[![Powered by ChainGPT](https://img.shields.io/badge/Powered%20by-ChainGPT-7C3AED?style=for-the-badge)](https://chaingpt.org)
 [![Deployed on](https://img.shields.io/badge/Deployed%20on-Arbitrum%20Sepolia-28A0F0?style=for-the-badge)](https://sepolia.arbiscan.io/address/0xbD124A4C743847f5862024906B66ABeDeB9cCB6e)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
-[Try the dApp ↗](https://iex-ai.vercel.app/) · [Read the Docs ↗](https://docs-iex-ai.vercel.app/) · [Demo Video (4 min)](#) · [Submission Tweet](#) · [Arbiscan — Vault Factory](#)
+[Try the dApp ↗](https://iex-ai.vercel.app/) · [Demo Video (4 min)](#) · [Arbiscan — Vault Factory](#)
 
 </div>
 
@@ -23,7 +21,6 @@
 
 - [The Problem](#the-problem)
 - [The Solution](#the-solution)
-- [Why We Deployed Our Own Token](#why-we-deployed-our-own-token)
 - [Real-World Use Cases](#real-world-use-cases)
 - [System Architecture](#system-architecture)
 - [Deposit Flow](#deposit-flow)
@@ -66,20 +63,9 @@ Existing solutions ( Tornado Cash, Railgun) are for transfers — not yield gene
 - ✅ **Per-depositor amounts are cryptographically hidden** — even the vault cannot see individual balances.
 - ✅ **The aggregate TVL stays publicly verifiable** — vault transparency is preserved with live TVL display.
 - ✅ **Yield accrues on confidential tokens** — ERC-4626 vault logic applied to confidential assets.
-- ✅ **Vault recommendations are AI-assisted** via ChainGPT — routing, APY comparison, risk analysis.
+- ✅ **Vault recommendations are AI-assisted via ChainGPT** — routing, APY comparison, risk analysis.
 
 > **Key insight:** Yield and privacy are not opposites if you draw the boundary at the **depositor** level: the world sees the vault succeed, but no one sees the individual depositors who made it succeed.
-
-## Why We Deployed Our Own Token
-
-We originally planned to use **cUSDC** (iExec's confidential USDC). But `faucet.circle.com` — the official source of test USDC on Arbitrum Sepolia — **is blocked by Indonesian ISPs** (Law on Information and Electronic Transactions / UU ITE No. 19/2008). Indonesian users could not onboard without a VPN. Judges testing from Asia would hit the same wall.
-
-So we deployed our own confidential token using iExec's official ERC-7984 wrapper:
-
-1. **`USDC`** — a public ERC-20 (6 decimals). **Zero gatekeepers.**
-2. **`cUSDC`** — a concrete instance of iExec's `ERC20ToERC7984Wrapper`. Wraps USDC 1:1 into a confidential token.
-
-This turned out to be a **deeper iExec integration**: instead of just consuming an existing confidential token, we use their wrapper primitive to mint our own.
 
 ## Real-World Use Cases
 
@@ -134,7 +120,7 @@ flowchart TB
 
     UI --> Wagmi
     UI --> Handle
-    UI --> ChainGPT
+    UI --> AI
     UI --> Nox
     UI --> Lifi
     Wagmi --> USDC
@@ -151,17 +137,12 @@ flowchart TB
 
     classDef chain fill:#FEF3C7,stroke:#D97706,stroke-width:2px
     classDef nox fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
-    classDef ai fill:#EDE9FE,stroke:#7C3AED,stroke-width:2px
+classDef ai fill:#EDE9FE,stroke:#7C3AED,stroke-width:2px
     class USDC,RLC,CUSDC,CRLC,USDCVault,RLCVault chain
     class Gateway,TEE nox
     class ChainGPT ai
 ```
 
-The system is built around a clean separation of concerns:
-
-- **Frontend (`/src`)** — every interactive surface a depositor or withdrawer touches.
-- **Smart Contracts (`/foundry`)** — the trust layer. All vault logic, escrow rules, and confidential token mechanics live here.
-- **iExec Nox** — the trusted execution layer. Encrypted amounts never leave the TEE in plaintext; the gateway brokers decryption requests with EIP-712 authorisation.
 - **ChainGPT** — proxied server-side so the API key is never shipped to the browser.
 
 ## Deposit Flow
@@ -305,15 +286,7 @@ Three Nox primitives are used throughout the flow:
 2. **Confidential transfer.** `deposit()` moves cUSDC from depositor to the `Vault` contract via `confidentialTransferFrom`. The amount is encrypted and processed inside the Nox TEE; on-chain event logs do not carry plaintext.
 3. **Public-aggregate decryption.** Every deposit calls `Nox.allowPublicDecryption(_encryptedTotal)`. Visitors decrypt the aggregate without a signature; per-depositor amounts stay private.
 
-### Layer 3 — ChainGPT AI Integration (`/src/app/api/chaingpt`)
-
-**One live touchpoint**, using ChainGPT's Web3 LLM:
-
-| Touchpoint | ChainGPT Feature | Server Endpoint | UI Location | Status |
-| --- | --- | --- | --- | --- |
-| **Vault routing assistant** | Web3 LLM (`general_assistant`) | `/api/chaingpt` | Floating AI button on all pages | ✅ Live |
-
-The endpoint is wrapped as a Next.js Route Handler server-side — the ChainGPT API key never lands in the browser bundle.
+The endpoint is wrapped as a Next.js Route Handler server-side so the API key is never shipped to the browser.
 
 ### Layer 4 — Frontend (`/src`)
 
@@ -541,6 +514,7 @@ pnpm dev
 
 | Name | Role | Links |
 | --- | --- | --- |
+| **Catur Setyono** | Full-stack & contracts | [GitHub](https://github.com/maulana-tech) |
 | **Maulana** | Full-stack & contracts | [GitHub](https://github.com/maulana-tech) |
 
 > Entry for the iExec Vibe Coding Challenge.
