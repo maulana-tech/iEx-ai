@@ -29,6 +29,13 @@ export function PositionsSection({
   chainsById,
 }: PositionsSectionProps) {
   const openWithdrawSheet = useWithdrawStore((state) => state.openSheet);
+  const isConfidential = position.protocolName?.toLowerCase().includes("nox");
+  const handleNoxWithdraw = (pos: LifiPortfolioPosition) => {
+    if (isConfidential) {
+      return;
+    }
+    openWithdrawSheet(pos);
+  };
   const isLoading = status === "loading" || status === "idle";
   const isEmpty = status === "ready" && positions.length === 0;
 
@@ -186,10 +193,17 @@ export function PositionsSection({
                         </div>
                         <button
                           type="button"
-                          onClick={() => openWithdrawSheet(position)}
-                          className="flex h-7 items-center gap-1 rounded-full bg-brand px-3 text-[10px] font-semibold text-white cursor-pointer transition-colors hover:bg-brand-hover"
+                          onClick={() => {
+                            const isConfidential = position.protocolName?.toLowerCase().includes("nox");
+                            if (isConfidential) {
+                              return;
+                            }
+                            openWithdrawSheet(position);
+                          }}
+                          disabled={position.protocolName?.toLowerCase().includes("nox")}
+                          className="flex h-7 items-center gap-1 rounded-full bg-brand px-3 text-[10px] font-semibold text-white cursor-pointer transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                          Withdraw
+                          {position.protocolName?.toLowerCase().includes("nox") ? "Coming soon" : "Withdraw"}
                           <FiArrowUpRight className="h-3 w-3" />
                         </button>
                       </div>
