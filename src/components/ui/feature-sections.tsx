@@ -43,7 +43,7 @@ export function FeatureSections({
   const isVertical = columns === 3;
 
   return (
-    <section className="relative h-[62%] flex-col overflow-hidden rounded-3xl border border-main bg-surface p-5 sm:p-6">
+    <section className="relative h-[62%] flex-col overflow-hidden rounded-sm border border-main bg-surface p-5 sm:p-6">
       <div className="flex flex-col gap-2">
         {eyebrow ? (
           <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-faint">
@@ -79,16 +79,16 @@ export function FeatureSections({
 function VerticalCard({ card }: { card: FeatureCard }) {
   return (
     <div
-      className="relative flex flex-col items-center gap-3 overflow-hidden rounded-2xl border border-(--color-line)/40 p-4 text-center"
+      className="relative flex flex-col items-center gap-3 overflow-hidden rounded-sm border border-(--color-line)/40 p-4 text-center"
       style={{ backgroundColor: card.tint }}
     >
-      <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full ring-1 ring-white/10">
+      <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-sm border border-white/10 ring-1 ring-white/10">
         <Image
           src={card.logo}
           alt={card.protocol}
           fill
           sizes="30px"
-          className="object-cover"
+          className="object-contain"
         />
       </span>
       <span className="w-full truncate text-sm font-semibold text-main">
@@ -125,17 +125,17 @@ function VerticalCard({ card }: { card: FeatureCard }) {
 function HorizontalCard({ card }: { card: FeatureCard }) {
   return (
     <div
-      className="relative flex flex-col justify-between gap-4 overflow-hidden rounded-2xl p-6.5"
+      className="relative flex flex-col justify-between gap-4 overflow-hidden rounded-sm border border-white/20 p-6"
       style={{ backgroundColor: card.tint }}
     >
       <div className="flex items-center gap-3">
-        <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full">
+        <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-sm border border-white/10">
           <Image
             src={card.logo}
             alt={card.protocol}
             fill
             sizes="44px"
-            className="object-cover"
+            className="object-contain"
           />
         </span>
         <div className="flex min-w-0 flex-col">
