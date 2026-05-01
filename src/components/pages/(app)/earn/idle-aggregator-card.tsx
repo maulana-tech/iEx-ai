@@ -4,7 +4,7 @@ import { type FeatureSections } from "@/components/ui";
 
 export function IdleAggregatorCard() {
   return (
-    <section className="relative h-[62%] flex-col overflow-hidden rounded-3xl border border-main bg-surface p-5 sm:p-6">
+    <section className="relative flex h-[62%] flex-col overflow-hidden rounded-3xl border border-main bg-surface p-5 sm:p-6">
       <div className="flex flex-col gap-2">
         <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-faint">
           <Image
@@ -26,18 +26,18 @@ export function IdleAggregatorCard() {
         </p>
       </div>
 
-      <div className="mt-6 flex flex-1 items-center justify-center">
-        <div className="relative aspect-video w-full max-w-sm overflow-hidden rounded-lg border border-white/10">
+      <div className="mt-8 flex flex-1 items-center justify-center">
+        <div className="relative aspect-video w-full max-w-2xl overflow-hidden rounded-lg border border-white/10">
           <Image
             src="/Assets/Images/Logo-Brand/chaingpt.png"
             alt="ChainGPT"
             fill
-            className="object-contain"
+            className="object-contain p-2"
           />
         </div>
       </div>
 
-      <div className="mt-4 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
+      <div className="mt-auto pt-10 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
         <div className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand-soft px-4 py-2 text-sm font-semibold text-main">
           <FiArrowLeft className="h-4 w-4" />
           Enter an amount to continue
