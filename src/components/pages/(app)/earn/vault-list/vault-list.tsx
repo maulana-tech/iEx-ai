@@ -1,7 +1,7 @@
 "use client";
 
 import { FiCheck, FiClock, FiExternalLink } from "react-icons/fi";
-import { HiOutlineShieldCheck, HiLockClosed } from "react-icons/hi2";
+import { HiOutlineShieldCheck } from "react-icons/hi2";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useMemo, useRef } from "react";
@@ -9,7 +9,6 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import { useWalletReady } from "@/lib/wallet-ready";
 import {
-  useDepositStore,
   useExpertStore,
   useMetaStore,
   useNoxDepositStore,
@@ -58,7 +57,6 @@ export function VaultList() {
   const setTvlMinFilter = useExpertStore((state) => state.setTvlMinFilter);
   const selectVault = useExpertStore((state) => state.selectVault);
   const fetchVaults = useExpertStore((state) => state.fetchVaults);
-  const openDepositSheet = useDepositStore((state) => state.openSheet);
   const openNoxDepositSheet = useNoxDepositStore((state) => state.openSheet);
   const chainsById = useMetaStore((state) => state.chainsById);
   const protocolsByName = useMetaStore((state) => state.protocolsByName);
@@ -199,12 +197,6 @@ export function VaultList() {
       chain,
       amount,
     });
-    openDepositSheet({
-      vault: selectedVault,
-      token,
-      chain,
-      amount,
-    });
   }
 
   if (!hasValidAmount) {
@@ -266,13 +258,7 @@ export function VaultList() {
                 <span>
                   {sorted.length} route{sorted.length === 1 ? "" : "s"} via
                 </span>
-                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#4e5672]">
-                  <HiLockClosed className="h-2.5 w-2.5 text-white" />
-                </span>
-                <span className="font-semibold text-main">Nox Protocol</span>
-                <span className="rounded-full bg-brand-soft px-1.5 py-0.5 text-[9px] font-bold text-brand">
-                  CONFIDENTIAL
-                </span>
+                <span className="font-semibold text-main">LI.FI</span>
               </>
             ) : (
               <span>Discovering vault routes</span>
@@ -423,13 +409,9 @@ export function VaultList() {
                                 BEST
                               </span>
                             ) : null}
-                            <span className="flex h-4 items-center gap-1 rounded-full bg-[rgba(74,101,255,0.12)] px-1.5 py-0.5 text-[9px] font-semibold text-[#4a65ff]">
-                              <HiLockClosed className="h-2.5 w-2.5" />
-                              PRIVATE
-                            </span>
                             {!vault.isTransactional ? (
                               <span
-                                title="Not supported by Nox Protocol"
+                                title="Not supported"
                                 className="rounded-full bg-surface-muted px-2 py-0.5 text-[10px] font-semibold text-muted"
                               >
                                 VIEW ONLY
@@ -438,12 +420,6 @@ export function VaultList() {
                           </div>
                           <span className="line-clamp-1 text-xs text-muted">
                             {vault.vaultName} · {vault.chainShortName}
-                          </span>
-                          <span className="inline-flex items-center gap-1 text-[9px] text-faint">
-                            <HiLockClosed className="h-2.5 w-2.5" />
-                            <span className="font-semibold">
-                              Nox Confidential
-                            </span>
                           </span>
                           {timelockLabel || vault.kyc ? (
                             <div className="mt-1 flex flex-wrap items-center gap-1.5">
@@ -536,11 +512,8 @@ export function VaultList() {
 
       <div className="mt-3 flex items-center justify-center gap-2 pb-1">
         <span className="text-[11px] font-medium text-faint">Powered by</span>
-        <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#4e5672]">
-          <HiLockClosed className="h-2.5 w-2.5 text-white" />
-        </span>
         <span className="text-[11px] font-semibold tracking-tight text-muted">
-          Nox Protocol
+          LI.FI
         </span>
       </div>
     </section>
