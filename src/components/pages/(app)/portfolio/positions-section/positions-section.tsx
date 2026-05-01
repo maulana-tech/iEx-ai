@@ -29,13 +29,6 @@ export function PositionsSection({
   chainsById,
 }: PositionsSectionProps) {
   const openWithdrawSheet = useWithdrawStore((state) => state.openSheet);
-  const isConfidential = position.protocolName?.toLowerCase().includes("nox");
-  const handleNoxWithdraw = (pos: LifiPortfolioPosition) => {
-    if (isConfidential) {
-      return;
-    }
-    openWithdrawSheet(pos);
-  };
   const isLoading = status === "loading" || status === "idle";
   const isEmpty = status === "ready" && positions.length === 0;
 
@@ -196,14 +189,14 @@ export function PositionsSection({
                           onClick={() => {
                             const isConfidential = position.protocolName?.toLowerCase().includes("nox");
                             if (isConfidential) {
+                              alert("For Nox Protocol vaults, please withdraw via the Nox Protocol native UI.");
                               return;
                             }
                             openWithdrawSheet(position);
                           }}
-                          disabled={position.protocolName?.toLowerCase().includes("nox")}
-                          className="flex h-7 items-center gap-1 rounded-full bg-brand px-3 text-[10px] font-semibold text-white cursor-pointer transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-7 items-center gap-1 rounded-full bg-brand px-3 text-[10px] font-semibold text-white cursor-pointer transition-colors hover:bg-brand-hover"
                         >
-                          {position.protocolName?.toLowerCase().includes("nox") ? "Coming soon" : "Withdraw"}
+                          Withdraw
                           <FiArrowUpRight className="h-3 w-3" />
                         </button>
                       </div>
