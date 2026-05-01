@@ -8,7 +8,7 @@ import Link from "next/link";
 import type { LifiChainMeta } from "@/lib/lifi-meta";
 import type { LifiPortfolioPosition } from "@/lib/lifi-portfolio";
 import { resolvePositionUrl, resolveProtocol } from "@/lib/protocol-registry";
-import { useWithdrawStore } from "@/stores";
+import { useWithdrawStore, useNoxWithdrawStore } from "@/stores";
 import {
   formatBalance,
   formatUsd,
@@ -29,6 +29,7 @@ export function PositionsSection({
   chainsById,
 }: PositionsSectionProps) {
   const openWithdrawSheet = useWithdrawStore((state) => state.openSheet);
+  const openNoxWithdrawSheet = useNoxWithdrawStore((state) => state.openSheet);
   const isLoading = status === "loading" || status === "idle";
   const isEmpty = status === "ready" && positions.length === 0;
 
@@ -189,7 +190,7 @@ export function PositionsSection({
                           onClick={() => {
                             const isConfidential = position.protocolName?.toLowerCase().includes("nox");
                             if (isConfidential) {
-                              alert("For Nox Protocol vaults, please withdraw via the Nox Protocol native UI.");
+                              openNoxWithdrawSheet(position as unknown as import("@/lib/nox-types").NoxPortfolio);
                               return;
                             }
                             openWithdrawSheet(position);
