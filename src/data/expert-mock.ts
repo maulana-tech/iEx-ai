@@ -6,8 +6,18 @@ export const mockTokens: Token[] = [
 ];
 
 export const mockChains: Chain[] = [
-  { id: 421614, name: "Arbitrum Sepolia", shortName: "Arb Sepolia" },
-  { id: 42161, name: "Arbitrum One", shortName: "Arbitrum" },
+  {
+    id: 421614,
+    name: "Arbitrum Sepolia",
+    shortName: "Arb Sepolia",
+    logoURI: "/Assets/Images/Logo-Coin/arb-logo.svg",
+  },
+  {
+    id: 42161,
+    name: "Arbitrum One",
+    shortName: "Arbitrum",
+    logoURI: "/Assets/Images/Logo-Coin/arb-logo.svg",
+  },
   { id: 8453, name: "Base", shortName: "Base" },
   { id: 137, name: "Polygon", shortName: "Polygon" },
   { id: 747474, name: "Katana", shortName: "Katana" },

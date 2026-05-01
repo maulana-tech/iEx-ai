@@ -8,6 +8,7 @@ export type Chain = {
   id: number;
   name: string;
   shortName: string;
+  logoURI?: string;
 };
 
 export type VaultRisk = "low" | "medium" | "high";

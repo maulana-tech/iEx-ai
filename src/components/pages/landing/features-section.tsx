@@ -43,7 +43,7 @@ function ConfidentialVaultVisual() {
             animate={inView ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
           >
-            Encrypted
+            TEE Secured
           </motion.span>
         </div>
       </div>
@@ -73,7 +73,7 @@ function ConfidentialVaultVisual() {
   );
 }
 
-function AutoCompoundVisual() {
+function ChainGPTVisual() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true });
 
@@ -83,63 +83,40 @@ function AutoCompoundVisual() {
       className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-xl p-5"
       style={{ backgroundColor: "var(--color-surface-2)" }}
     >
-      <motion.div
-        className="pointer-events-none absolute left-5 top-5 select-none"
-        initial={{ y: 20, opacity: 0 }}
-        animate={inView ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }}
-        transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
-      >
-        <Image
-          src="/Assets/Images/Logo-DeFi/morpho-logo.webp"
-          alt=""
-          width={32}
-          height={32}
-          className="rounded-full"
-        />
-      </motion.div>
-      <motion.div
-        className="pointer-events-none absolute right-5 top-5 select-none"
-        initial={{ y: -20, opacity: 0 }}
-        animate={inView ? { y: 0, opacity: 1 } : { y: -20, opacity: 0 }}
-        transition={{ duration: 0.6, delay: 0.7, ease: "easeOut" }}
-      >
-        <Image
-          src="/Assets/Images/Logo-DeFi/aave-logo.svg"
-          alt=""
-          width={32}
-          height={32}
-          className="rounded-full"
-        />
-      </motion.div>
-
-      <div className="flex flex-col items-center gap-3">
-        <div className="flex items-center gap-2">
-          {[0, 1, 2, 3].map((i) => (
-            <motion.div
-              key={`circle-${i}`}
-              className="size-10 rounded-full"
-              style={{ backgroundColor: "var(--color-surface-3)" }}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={
-                inView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }
-              }
-              transition={{
-                duration: 0.6,
-                delay: i * 0.15,
-                ease: "easeOut",
-              }}
-            />
-          ))}
-        </div>
-        <motion.span
-          className="text-2xl font-bold tabular-nums text-main"
-          initial={{ opacity: 0, y: 10 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
+      <div className="flex flex-col items-center gap-4">
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={inView ? { scale: 1, opacity: 1 } : { scale: 0.8, opacity: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="relative"
         >
-          15.0%
-        </motion.span>
-        <span className="text-xs text-faint">Compounding APR</span>
+          <div className="absolute inset-0 animate-pulse rounded-full bg-brand/20 blur-xl" />
+          <Image
+            src="/Assets/Images/Logo-Brand/chaingpt.png"
+            alt="ChainGPT"
+            width={80}
+            height={80}
+            className="relative size-20 rounded-2xl object-contain shadow-2xl"
+          />
+        </motion.div>
+        <div className="flex flex-col items-center gap-1 text-center">
+          <motion.span
+            className="text-lg font-semibold text-main"
+            initial={{ opacity: 0, y: 10 }}
+            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            AI Agent Active
+          </motion.span>
+          <motion.span
+            className="text-[10px] uppercase tracking-widest text-faint"
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+          >
+            Routing Optimization
+          </motion.span>
+        </div>
       </div>
     </div>
   );
@@ -242,9 +219,9 @@ function OneClickVisual() {
 const features = [
   {
     emoji: "🔒",
-    title: "Confidential Deposits",
+    title: "Nox Protocol & TEE",
     description:
-      "Deposit any asset, wrapped into TEE-encrypted confidential tokens (ERC-7984). Your balances stay hidden from the public chain — invisible to MEV bots and copy-traders.",
+      "Powered by iExec Nox and Trusted Execution Environments (TEE). Your individual balances and strategies stay cryptographically hidden while aggregate TVL remains public.",
     visual: ConfidentialVaultVisual,
     tags: [
       {
@@ -260,18 +237,18 @@ const features = [
     ],
   },
   {
-    emoji: "🔄",
-    title: "Auto-Compound Rewards",
+    emoji: "🤖",
+    title: "ChainGPT AI Routing",
     description:
-      "Your yield is automatically reinvested to maximize returns. Rewards from vault staking are compounded without any manual action required.",
-    visual: AutoCompoundVisual,
+      "Get real-time vault recommendations and risk analysis powered by ChainGPT. Our AI agent finds the most efficient yield routes across Arbitrum while preserving your privacy.",
+    visual: ChainGPTVisual,
     logos: true,
   },
   {
-    emoji: "⚡",
-    title: "One-Click Deposit",
+    emoji: "🛡️",
+    title: "Confidential Tokens",
     description:
-      "Deposit into optimized yield vaults with a single transaction. The protocol handles wrapping, approval, and vault entry — so you don't have to.",
+      "ERC-7984 confidential tokens (cUSDC, cRLC) wrap your public assets into private ones. Enjoy the security of confidential transfers without sacrificing DeFi composability.",
     visual: OneClickVisual,
   },
 ];

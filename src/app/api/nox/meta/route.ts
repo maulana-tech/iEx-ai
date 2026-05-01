@@ -7,8 +7,7 @@ const SUPPORTED_CHAINS: NoxChain[] = [
     id: 421614,
     name: "Arbitrum Sepolia",
     shortName: "Arb Sepolia",
-    logoURI:
-      "https://assets.coingecko.com/coins/images/16547/small/photo_2023-05-30_21-47-00.jpg",
+    logoURI: "/Assets/Images/Logo-Coin/arb-logo.svg",
     rpcUrl: "https://sepolia-rollup.arbitrum.io/rpc",
     explorerUrl: "https://sepolia.arbiscan.io",
     isConfidentialSupported: true,

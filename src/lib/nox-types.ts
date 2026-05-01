@@ -121,12 +121,14 @@ export const SUPPORTED_NOX_CHAINS: NoxChain[] = [
     id: 421614,
     name: "Arbitrum Sepolia",
     shortName: "Arb Sepolia",
+    logoURI: "/Assets/Images/Logo-Coin/arb-logo.svg",
     isConfidentialSupported: true,
   },
   {
     id: 42161,
     name: "Arbitrum One",
     shortName: "Arbitrum",
+    logoURI: "/Assets/Images/Logo-Coin/arb-logo.svg",
     isConfidentialSupported: true,
   },
 ];
