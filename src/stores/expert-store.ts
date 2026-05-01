@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { mockChains, mockTokens } from "@/data";
 import { fetchVaultsViaProxy, type NoxVault } from "@/lib/nox-vault";
+import { NOX_CONTRACTS, NOX_VAULTS } from "@/lib/nox-types";
 import type {
   Chain,
   Token,
@@ -105,6 +106,11 @@ function toNumber(value: unknown, fallback = 0): number {
   return fallback;
 }
 
+const YIELD_VAULT_TO_CTOKEN: Record<string, `0x${string}`> = {
+  [NOX_VAULTS.cUSDC_VAULT.toLowerCase()]: NOX_CONTRACTS.cUSDC,
+  [NOX_VAULTS.cRLC_VAULT.toLowerCase()]: NOX_CONTRACTS.cRLC,
+};
+
 function mapVault(vault: NoxVault): VaultStrategy {
   const tvlUsd = toNumber(vault.tvl?.usd, 0);
   const apyPercent = toNumber(vault.apy?.total, 0);
@@ -114,6 +120,10 @@ function mapVault(vault: NoxVault): VaultStrategy {
       : toNumber(vault.apy30d, 0);
   const underlying = vault.underlyingToken;
   const rawProtocolName = vault.protocol ?? "Unknown";
+  const cTokenAddress =
+    YIELD_VAULT_TO_CTOKEN[vault.address.toLowerCase()] ??
+    (underlying?.address as `0x${string}` | undefined) ??
+    "";
 
   return {
     id: `${vault.chainId}:${vault.address}`,
@@ -124,7 +134,7 @@ function mapVault(vault: NoxVault): VaultStrategy {
     vaultName: vault.name,
     vaultAddress: vault.address,
     tokenSymbol: underlying?.symbol ?? "-",
-    tokenAddress: underlying?.address ?? "",
+    tokenAddress: cTokenAddress,
     tokenDecimals: underlying?.decimals ?? 18,
     chainId: vault.chainId,
     chainShortName: resolveChainShortName(vault.chainId),
