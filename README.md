@@ -504,8 +504,7 @@ pnpm dev
 - [x] Confidential Token integrated as core utility (private deposits)
 - [x] All contracts verified on Arbiscan
 - [x] Dev experience notes documented
-- [ ] 4-minute demo video (script ready, recording pending)
-- [ ] Submission post on X tagging `@iEx_ec` and `@Chain_GPT`
+- [x] Submission post on X tagging `@iEx_ec` and `@Chain_GPT`
 - [x] Joined iExec Discord & Vibe Coding Challenge channel
 
 ---
@@ -514,8 +513,8 @@ pnpm dev
 
 | Name | Role | Links |
 | --- | --- | --- |
-| **Catur Setyono** | Full-stack & contracts | [GitHub](https://github.com/maulana-tech) |
 | **Maulana** | Full-stack & contracts | [GitHub](https://github.com/maulana-tech) |
+| **Catur Setyono** | Full-stack | [GitHub](https://github.com/CaturSetyono) |
 
 > Entry for the iExec Vibe Coding Challenge.
 
@@ -540,7 +539,7 @@ MIT © 2026 iEx AI contributors. See [LICENSE](LICENSE).
 
 <div align="center">
 
-**Built for the [iExec Vibe Coding Challenge](https://docs.iex.ec/) · April 2026**
+**Built for the [iExec Vibe Coding Challenge](https://dorahacks.io/hackathon/vibe-coding-iexec/) · April 2026**
 
 **Powered by Nox · Self-Sovereign cUSDC · Deployed on Arbitrum Sepolia**
 
